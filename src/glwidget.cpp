@@ -1,6 +1,8 @@
+// this is a test
 #include "glwidget.h"
 #include "settings.h"
 #include <math.h>
+
 
 #include <stdio.h>
 using namespace std;
