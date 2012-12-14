@@ -26,6 +26,7 @@ GLWidget::GLWidget(QWidget *parent)
 
     m_arrowPos = Vector3(0,0,0);
     m_targetPos = m_arrowPos;
+    m_arrowhit = false;
 }
 
 GLWidget::~GLWidget()
@@ -115,6 +116,10 @@ void GLWidget::initializeGL()
     // Enable Lighting
     glEnable(GL_LIGHTING);
 
+    //Enable blend
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+
     // Enable depth testing, so that objects are occluded based on depth instead of drawing order
     glEnable(GL_DEPTH_TEST);
 
@@ -133,6 +138,11 @@ void GLWidget::initializeGL()
     GLfloat global_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
+
+    // Create particle emitter
+    m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"));
+
+    glClear(GL_ACCUM_BUFFER_BIT);
 
     // Set up GL_LIGHT0 with a position and lighting properties
     GLfloat ambientLight[] = {0.1f, 0.1f, 0.1f, 1.0f};
@@ -155,7 +165,29 @@ void GLWidget::initializeGL()
     // Load the initial settings
     updateSettings();
     updateCamera();
+}
 
+GLuint GLWidget::loadTexture(const QString &path)
+{
+    QFile file(path);
+
+    QImage image, texture;
+    if(!file.exists()) { return -1;}
+    image.load(file.fileName());
+    texture = QGLWidget::convertToGLFormat(image);
+    //Put your code here
+    GLuint id = 0;
+    glGenTextures(1, &id);
+
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, texture.width(), texture.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return id;
 }
 
 /**
@@ -221,9 +253,20 @@ void GLWidget::paintGL()
     //look for a hit, and if we find one, stop the arrow
     if(m_canCollide && (m_arrowPos - m_targetPos).length() < m_arrowRadius + m_targetRadius && m_timer.isActive())
     {
+        m_arrowhit = true;
         m_scoreLabel->setText("Score: " + QString::number(++m_score));
         m_timer.stop();
     }
+    if (m_arrowhit) {
+        glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 1.f, 0.0f);
+        glVertex3f(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z);
+        glVertex3f(m_arrowPos.x, m_arrowPos.y + 1, m_arrowPos.z);
+        glVertex3f(m_arrowPos.x + 1, m_arrowPos.y + 1, m_arrowPos.z);
+        glEnd();
+    }
+
+
 
     //transform to get to camera coordinates to render the arrow
     glTranslatef(-m_firedXDiff, 0.0f, -m_firedZDiff);
@@ -245,7 +288,7 @@ void GLWidget::paintGL()
     glPopMatrix();
 
     //render the walls, floor and ceiling of our playing field
-    glColor3f(0.0f, 0.7f, 0.93f);
+    /*glColor3f(0.0f, 0.7f, 0.93f);
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 5.0f);
     glScalef(10.0f, 10.0f, 10.0f);
@@ -288,7 +331,7 @@ void GLWidget::paintGL()
     glRotatef(90, 0.0f, 0.0f, 1.0f);
     renderQuad();
     glPopMatrix();
-
+*/
     //Render intersection spheres
     if(m_canCollide && settings.showIntersectSpheres)
     {
@@ -302,6 +345,23 @@ void GLWidget::paintGL()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color & depth buffers
+
+    //glDepthMask(GL_FALSE);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    //m_emitter->updateParticles();       //Move the particles
+    //m_emitter->drawParticles();         //Draw the particles
+
+    //create trailers
+    //glAccum(GL_MULT, .5f);
+    //glAccum(GL_ACCUM, .5f);
+    //glAccum(GL_RETURN, 1.f);
+
+    //glDepthMask(GL_TRUE);
+    //glFlush();
+    //swapBuffers();
 }
 
 /**
@@ -485,7 +545,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         {
             m_originalMouseX = event->globalX() - event->x() + this->width()/2;
             m_originalMouseY = event->globalY() - event->y() + this->height()/2;
-            QCursor::setPos(m_originalMouseX, m_originalMouseY);
+            //QCursor::setPos(m_originalMouseX, m_originalMouseY);
         }
         else
         {
@@ -493,7 +553,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             float y = event->globalY();
             rotateCamera(x - m_originalMouseX, y-m_originalMouseY);
             update();
-            QCursor::setPos(m_originalMouseX, m_originalMouseY);
+            //QCursor::setPos(m_originalMouseX, m_originalMouseY);
         }
         update();
     }
@@ -512,6 +572,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         QCursor::setPos(m_originalMouseX, m_originalMouseY);
     }
     else {
+        m_arrowhit = false;
         m_originalMouseX = event->globalX();
         m_originalMouseY = event->globalY();
         if(m_increment == 0.0f && !m_timer.isActive())
@@ -577,6 +638,20 @@ void GLWidget::tick()
 {
     m_increment++;
     update();
+    glDepthMask(GL_FALSE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+   //create trailers
+    //glAccum(GL_MULT, .5f);
+    //glAccum(GL_ACCUM, .5f);
+    //glAccum(GL_RETURN, 1.f);
+
+    m_emitter->updateParticles();       //Move the particles
+    m_emitter->drawParticles();         //Draw the particles
+
+    glDepthMask(GL_TRUE);
+    glFlush();
+
     if(m_increment/(float) m_fps > 1.0f)
     {
         //reset the timer and set fired to false

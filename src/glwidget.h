@@ -8,6 +8,7 @@
 #include <iostream>
 #include <QLabel>
 #include "camera.h"
+#include "particleemitter.h"
 
 class GLWidget : public QGLWidget
 {
@@ -29,6 +30,8 @@ protected:
     void keyPressEvent ( QKeyEvent * event );
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
+    GLuint loadTexture(const QString& path);
+
 
 
 protected slots:
@@ -64,7 +67,7 @@ private:
     int m_score;
     QLabel * m_scoreLabel;
     bool m_canCollide;
-
+    bool m_arrowhit;
     //This vector will automatically contain the arrow's position x,y,z coordinates
     Vector3 m_arrowPos;
     float m_arrowRadius;
@@ -72,6 +75,12 @@ private:
     //This vector will be initialized to 0,0,0. You will need to set it in the renderTarget method
     Vector3 m_targetPos;
     float m_targetRadius;
+
+
+    // particle stuff
+    ParticleEmitter *m_emitter;
+
+
 };
 
 #endif // GLWIDGET_H
