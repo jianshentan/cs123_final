@@ -27,6 +27,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowPos = Vector3(0,0,1.f);
     m_targetPos = m_arrowPos;
     m_arrowhit = false;
+    m_fired = false;
 }
 
 GLWidget::~GLWidget()
@@ -248,7 +249,8 @@ void GLWidget::paintGL()
                           (sx*cmx*smx*omcy) + (cx*((smx*smx*omcy) + cy)));
 
     //move the arrow's position based on velocity and time
-    m_arrowPos += time*vel;
+    if (m_fired)
+        m_arrowPos += time*vel;
     //fake gravity
     //m_arrowPos.y -= time*.3f;
 
@@ -263,15 +265,6 @@ void GLWidget::paintGL()
                                         float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                         float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
         //m_timer.stop();
-    }
-
-    if (m_arrowhit) {
-        glBegin(GL_TRIANGLES);
-        glColor3f(0.0f, 1.f, 0.0f);
-        glVertex3f(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z);
-        glVertex3f(m_arrowPos.x, m_arrowPos.y + 1, m_arrowPos.z);
-        glVertex3f(m_arrowPos.x + 1, m_arrowPos.y + 1, m_arrowPos.z);
-        glEnd();
     }
 
 
@@ -297,7 +290,7 @@ void GLWidget::paintGL()
     renderArrowSphere();
 
     //render the walls, floor and ceiling of our playing field
-    /*glColor3f(0.0f, 0.7f, 0.93f);
+    glColor3f(0.0f, 0.7f, 0.93f);
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 5.0f);
     glScalef(10.0f, 10.0f, 10.0f);
@@ -339,7 +332,7 @@ void GLWidget::paintGL()
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 0.0f, 0.0f, 1.0f);
     renderQuad();
-    glPopMatrix();*/
+    glPopMatrix();
 
     //Render intersection spheres
     //if(m_canCollide && settings.showIntersectSpheres)
@@ -488,6 +481,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        m_zDiff -= 0.025f * cx;
 //        m_xDiff -= 0.025f * sx;
 //        this->updateCamera();
+        m_angleY -= 2.5f;
         //this->rotateCamera(0.f, 15.f);
         this->update();
     }
@@ -497,6 +491,8 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        m_xDiff += 0.025f * sx;
 //        this->updateCamera();
         //this->rotateCamera(0.f, -15.f);
+        m_angleY += 2.5f;
+
         this->update();
     }
     else if(event->key() == Qt::Key_D)
@@ -505,6 +501,8 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        m_xDiff += 0.025f * cx;
 //        this->updateCamera();
         //this->rotateCamera(15.f, 0.f);
+        m_angleX += 2.5f;
+
         this->update();
     }
     else if(event->key() == Qt::Key_A)
@@ -513,6 +511,8 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        m_xDiff -= 0.025f * cx;
         //this->rotateCamera(-5.f, 0.f);
 //        this->updateCamera();
+        m_angleX -= 2.5f;
+
         this->update();
     }
     /*float x = event->globalX();
@@ -570,8 +570,10 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
         m_originalMouseX = event->globalX();
         m_originalMouseY = event->globalY();
+        m_fired = true;
+        m_increment = 0.0f;
 
-        if(m_increment == 0.0f)
+        /*if(m_increment == 0.0f)
         {
             //start the timer if the increment is 0
             //m_active = true;
@@ -584,7 +586,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             m_fired = false;
             //m_active = false;
             //m_timer.stop();
-        }
+        }*/
         update();
     }
 
@@ -633,16 +635,5 @@ void GLWidget::setTargetPosition(Vector3 pos)
 **/
 void GLWidget::tick()
 {
-    //m_increment++;
     update();
-
-
-    /*if(m_increment/(float) m_fps > 1.0f)
-    {
-        //reset the timer and set fired to false
-        m_timer.stop();
-        //m_active = false;
-        m_increment = 0.0f;
-        m_fired = false;
-    }*/
 }
