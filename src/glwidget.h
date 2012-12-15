@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "particleemitter.h"
 #include "target.h"
+#include <vector>
 
 class GLWidget : public QGLWidget
 {
@@ -78,8 +79,7 @@ private:
 
     //This vector will be initialized to 0,0,0. You will need to set it in the renderTarget method
 
-    target *m_target;
-
+    std::vector<target *> m_targets;
 
     // particle stuff
     ParticleEmitter *m_emitter;

@@ -11,7 +11,7 @@
 class target
 {
 public:
-    target(Vector3 pos, float rad, float3 color);
+    target(Vector3 pos, float rad, Vector3 color);
     ~target();
     void renderTarget();
     void renderTargetSphere(GLUquadric *quadric);
