@@ -53,6 +53,7 @@ class ParticleEmitter
 
 public:
     ParticleEmitter(GLuint textureId = 0,
+                    float3 position = float3(0.f, 0.f, 0.f),
                     float3 color = float3(1.0f, 0.5f, 0.2f),
                     float3 velocity = float3(0.0f, 0.0001f, 0.0f),
                     float3 force = float3(0.0f, 0.0001f, 0.0f),
@@ -133,6 +134,8 @@ protected:
     float3 m_velocity;
     /** The force vector applied to every particle emitted into the scene */
     float3 m_force;
+    /** The starting point of the particle burst */
+    float3 m_position;
 };
 
 

@@ -1,11 +1,11 @@
 #include "particleemitter.h"
 
-ParticleEmitter::ParticleEmitter(GLuint textureId, float3 color, float3 velocity,
+ParticleEmitter::ParticleEmitter(GLuint textureId, float3 position, float3 color, float3 velocity,
                                  float3 force, float scale, float fuzziness, float speed,
                                  unsigned maxParticles) :
                     m_maxParticles(maxParticles), m_textureID(textureId), m_speed(speed),
                     m_fuzziness(fuzziness), m_scale(scale), m_color(color), m_velocity(velocity),
-                    m_force(force)
+                    m_force(force), m_position(position)
 {
     m_particles = new Particle[maxParticles];
     resetParticles();
@@ -34,9 +34,11 @@ ParticleEmitter::~ParticleEmitter()
   */
 void ParticleEmitter::resetParticle(unsigned i)
 {
-    m_particles[i].pos.zero();
+    m_particles[i].pos.z = m_position.z;
+    m_particles[i].pos.y = m_position.y;
+    m_particles[i].pos.x = m_position.x;
     m_particles[i].life = 1.0f;
-    m_particles[i].decay = urand(.0025f, .15f);
+    m_particles[i].decay = urand(.01f, .06f);
     m_particles[i].color = m_color;
     m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x));
     m_particles[i].force.y = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.y));
@@ -67,7 +69,7 @@ void ParticleEmitter::updateParticles()
     {
         if (!m_particles[i].active) {
             m_particles[i].active = true;
-            resetParticle(i);
+            //resetParticle(i);
         } else {
             Particle *cur = &(m_particles[i]);
             cur->pos.x += cur->dir.x * m_speed;
@@ -100,14 +102,14 @@ void ParticleEmitter::drawParticles()
         Particle *cur = &(m_particles[i]);
         glColor4f(float(cur->color.r), float(cur->color.g), float(cur->color.b), float(sqrt(cur->life)));
 
-        glTexCoord2f(0.f, 1.f);
-        glVertex3f(cur->pos.x, cur->pos.y, cur->pos.z);
+        glTexCoord2f(1.f, 0.f);
+        glVertex3f(cur->pos.x + m_scale, cur->pos.y + m_scale, cur->pos.z);
 
         glTexCoord2f(1.f, 1.f);
         glVertex3f(cur->pos.x + m_scale, cur->pos.y, cur->pos.z);
 
-        glTexCoord2f(1.f, 0.f);
-        glVertex3f(cur->pos.x + m_scale, cur->pos.y + m_scale, cur->pos.z);
+        glTexCoord2f(0.f, 1.f);
+        glVertex3f(cur->pos.x, cur->pos.y, cur->pos.z);
 
         glTexCoord2f(0.f, 0.f);
         glVertex3f(cur->pos.x, cur->pos.y + m_scale, cur->pos.z);

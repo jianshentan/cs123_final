@@ -7,24 +7,24 @@
 #include <stdio.h>
 using namespace std;
 
-GLWidget::GLWidget(QWidget *parent)
-    : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_targetRadius(0.5), m_score(0), m_canCollide(false)
+GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_targetRadius(0.5), m_score(0), m_canCollide(false)
 {
 
     // Set up the camera
     m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -1.0f;
     m_camera.center.x = 0.0f, m_camera.center.y = 0.0f, m_camera.center.z = 0.0f;
     m_camera.up.x = 0.0f, m_camera.up.y = 1.0f, m_camera.up.z = 0.0f;
-    m_camera.fovy = 45.0f, m_camera.near = 1.0f, m_camera.far = 1000.0f;
+    m_camera.fovy = 50.0f, m_camera.near = 1.0f, m_camera.far = 1000.0f;
 
     // Set up 60 FPS draw loop
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
+    m_timer.start(1000.0f / m_fps);
 
     this->setMouseTracking(true);
     m_originalMouseX = -1;
     m_originalMouseY = -1;
 
-    m_arrowPos = Vector3(0,0,0);
+    m_arrowPos = Vector3(0,0,1.f);
     m_targetPos = m_arrowPos;
     m_arrowhit = false;
 }
@@ -81,9 +81,6 @@ void GLWidget::renderTargetSphere()
     gluSphere(m_quadric, 1.0, 10, 10);
 
     glPopMatrix();
-
-
-
 }
 
 /**
@@ -99,6 +96,7 @@ void GLWidget::renderArrowSphere()
     glPushMatrix();
     glTranslatef(arrowPos.x, arrowPos.y, arrowPos.z);
     glScalef(arrowRadius, arrowRadius, arrowRadius);
+    glColor3f(1.f, 0.f, 0.f);
 
     gluSphere(m_quadric, 1.0, 10, 10);
 
@@ -140,7 +138,7 @@ void GLWidget::initializeGL()
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 
     // Create particle emitter
-    m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"));
+    m_emitter = NULL;
 
     glClear(GL_ACCUM_BUFFER_BIT);
 
@@ -197,8 +195,9 @@ GLuint GLWidget::loadTexture(const QString &path)
 void GLWidget::paintGL()
 {
     // Get the time
-    float time = 5*m_increment / (float) m_fps;
-    m_emitter->updateParticles();         //Draw the particles
+    float time = m_increment++ / (float) m_fps;
+    if (m_arrowhit)
+        m_emitter->updateParticles();         //Draw the particles
 
     //if we haven't fired yet, update the angles so that the arrow's angles and position match the cameras
     if(!m_fired)
@@ -208,7 +207,6 @@ void GLWidget::paintGL()
         m_firedXDiff = m_xDiff;
         m_firedZDiff = m_zDiff;
     }
-
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -251,14 +249,22 @@ void GLWidget::paintGL()
 
     //move the arrow's position based on velocity and time
     m_arrowPos += time*vel;
+    //fake gravity
+    //m_arrowPos.y -= time*.3f;
 
     //look for a hit, and if we find one, stop the arrow
-    if(m_canCollide && (m_arrowPos - m_targetPos).length() < m_arrowRadius + m_targetRadius && m_timer.isActive())
+    if(m_canCollide && (m_arrowPos - m_targetPos).length() < m_arrowRadius + m_targetRadius)
     {
         m_arrowhit = true;
+        m_canCollide = false;
+        float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
         m_scoreLabel->setText("Score: " + QString::number(++m_score));
-        m_timer.stop();
+        m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
+                                        float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
+                                        float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
+        //m_timer.stop();
     }
+
     if (m_arrowhit) {
         glBegin(GL_TRIANGLES);
         glColor3f(0.0f, 1.f, 0.0f);
@@ -286,8 +292,9 @@ void GLWidget::paintGL()
         glRotatef(qMax(15.0f-(time*30), 0.5f), 0.0f, 1.0f, 0.0f);
     }
 
-    renderArrow();
+    //renderArrow();
     glPopMatrix();
+    renderArrowSphere();
 
     //render the walls, floor and ceiling of our playing field
     /*glColor3f(0.0f, 0.7f, 0.93f);
@@ -332,36 +339,38 @@ void GLWidget::paintGL()
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 0.0f, 0.0f, 1.0f);
     renderQuad();
-    glPopMatrix();
-*/
+    glPopMatrix();*/
+
     //Render intersection spheres
-    if(m_canCollide && settings.showIntersectSpheres)
+    //if(m_canCollide && settings.showIntersectSpheres)
+    if(settings.showIntersectSpheres)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glColor3f(0.5f, 0.5f, 0.5f);
 
         renderTargetSphere();
 
-        renderArrowSphere();
+        //renderArrowSphere();
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     /* PARTICLES */
-        //glDepthMask(GL_FALSE);
+    if (m_arrowhit)
+    {
+        glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
         m_emitter->drawParticles();         //Draw the particles
 
     //  create trailers
-    //    glAccum(GL_MULT, .5f);
-    //    glAccum(GL_ACCUM, .5f);
-    //    glAccum(GL_RETURN, 1.f);
+        glAccum(GL_MULT, .5f);
+        glAccum(GL_ACCUM, .5f);
+        glAccum(GL_RETURN, 1.f);
 
         glDepthMask(GL_TRUE);
         glFlush();
-    //    swapBuffers();
-
+//      swapBuffers();
+    }
 }
 
 /**
@@ -369,33 +378,8 @@ void GLWidget::paintGL()
   **/
 void GLWidget::renderArrow()
 {
-    glColor3f(0.0f, 0.0f, 0.0f);
-    gluCylinder(m_quadric, 0.05f, 0.0f, 0.1f, 10, 10);
-    glPushMatrix();
-    glColor3f(0.37f, 0.15f, 0.02f);
-    glTranslatef(0.0f, 0.0f, -0.96f);
-    gluCylinder(m_quadric, 0.025f, 0.025f, 1.0f, 10, 10);
     glColor3f(0.0f, 0.7f, 0.0f);
-    gluSphere(m_quadric, 0.03f, 10, 10);
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glPushMatrix();
-    glTranslatef(0.0f, 0.02f, -0.05f);
-    glScalef(1.0f, 0.05f, 0.1f);
-    renderQuad();
-    glPopMatrix();
-    glPushMatrix();
-    glRotatef(120, 0.0f, 0.0f, 1.0f);
-    glTranslatef(0.0f, 0.02f, -0.05f);
-    glScalef(1.0f, 0.05f, 0.1f);
-    renderQuad();
-    glPopMatrix();
-    glPushMatrix();
-    glRotatef(240, 0.0f, 0.0f, 1.0f);
-    glTranslatef(0.0f, 0.02f, -0.05f);
-    glScalef(1.0f, 0.05f, 0.1f);
-    renderQuad();
-    glPopMatrix();
-    glPopMatrix();
+    gluSphere(m_quadric, 0.3f, 10, 10);
 }
 
 /**
@@ -501,32 +485,41 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
     double sx = sin(-m_angleX * M_PI/180);
     if(event->key() == Qt::Key_W)
     {
-        m_zDiff -= 0.025f * cx;
-        m_xDiff -= 0.025f * sx;
-        this->updateCamera();
+//        m_zDiff -= 0.025f * cx;
+//        m_xDiff -= 0.025f * sx;
+//        this->updateCamera();
+        //this->rotateCamera(0.f, 15.f);
         this->update();
     }
     else if(event->key() == Qt::Key_S)
     {
-        m_zDiff += 0.025f * cx;
-        m_xDiff += 0.025f * sx;
-        this->updateCamera();
+//        m_zDiff += 0.025f * cx;
+//        m_xDiff += 0.025f * sx;
+//        this->updateCamera();
+        //this->rotateCamera(0.f, -15.f);
         this->update();
     }
     else if(event->key() == Qt::Key_D)
     {
-        m_zDiff += 0.025f * -sx;
-        m_xDiff += 0.025f * cx;
-        this->updateCamera();
+//        m_zDiff += 0.025f * -sx;
+//        m_xDiff += 0.025f * cx;
+//        this->updateCamera();
+        //this->rotateCamera(15.f, 0.f);
         this->update();
     }
     else if(event->key() == Qt::Key_A)
     {
-        m_zDiff -= 0.025f * -sx;
-        m_xDiff -= 0.025f * cx;
-        this->updateCamera();
+//        m_zDiff -= 0.025f * -sx;
+//        m_xDiff -= 0.025f * cx;
+        //this->rotateCamera(-5.f, 0.f);
+//        this->updateCamera();
         this->update();
     }
+    /*float x = event->globalX();
+    float y = event->globalY();
+    rotateCamera(x - m_originalMouseX, y-m_originalMouseY);
+    update();*/
+
     else if(event->key() == Qt::Key_Escape)
     {
         m_firstPersonMode = false;
@@ -540,7 +533,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
   **/
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if(m_firstPersonMode) {
+    /*if(m_firstPersonMode) {
         if(m_originalMouseX < 0 && m_originalMouseY < 0)
         {
             m_originalMouseX = event->globalX() - event->x() + this->width()/2;
@@ -556,7 +549,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             //QCursor::setPos(m_originalMouseX, m_originalMouseY);
         }
         update();
-    }
+    }*/
 }
 
 /**
@@ -573,12 +566,15 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     }
     else {
         m_arrowhit = false;
+        m_canCollide = true;
+
         m_originalMouseX = event->globalX();
         m_originalMouseY = event->globalY();
-        if(m_increment == 0.0f && !m_timer.isActive())
+
+        if(m_increment == 0.0f)
         {
             //start the timer if the increment is 0
-            m_timer.start(1000.0f / m_fps);
+            //m_active = true;
             m_fired = true;
         }
         else
@@ -586,7 +582,8 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             //reset the timer
             m_increment = 0.0f;
             m_fired = false;
-            m_timer.stop();
+            //m_active = false;
+            //m_timer.stop();
         }
         update();
     }
@@ -636,16 +633,16 @@ void GLWidget::setTargetPosition(Vector3 pos)
 **/
 void GLWidget::tick()
 {
-    m_increment++;
+    //m_increment++;
     update();
-    repaint();
 
 
-    if(m_increment/(float) m_fps > 1.0f)
+    /*if(m_increment/(float) m_fps > 1.0f)
     {
         //reset the timer and set fired to false
         m_timer.stop();
+        //m_active = false;
         m_increment = 0.0f;
         m_fired = false;
-    }
+    }*/
 }

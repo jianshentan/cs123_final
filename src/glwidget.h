@@ -67,7 +67,10 @@ private:
     int m_score;
     QLabel * m_scoreLabel;
     bool m_canCollide;
+
     bool m_arrowhit;
+    bool m_active;
+
     //This vector will automatically contain the arrow's position x,y,z coordinates
     Vector3 m_arrowPos;
     float m_arrowRadius;
