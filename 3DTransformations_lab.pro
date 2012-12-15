@@ -10,14 +10,17 @@ SOURCES += src/settings.cpp \
     src/mainwindow.cpp \
     src/main.cpp \
     src/glwidget.cpp \
-    src/databinding.cpp
+    src/databinding.cpp \
+    src/particleemitter.cpp
 
 HEADERS += src/vector.h \
     src/settings.h \
     src/mainwindow.h \
     src/glwidget.h \
     src/databinding.h \
-    src/camera.h
+    src/camera.h \
+    src/particleemitter.h \
+    src/common.h
 
 FORMS += src/mainwindow.ui
 

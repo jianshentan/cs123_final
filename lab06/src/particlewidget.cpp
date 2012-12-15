@@ -50,10 +50,9 @@ GLuint ParticleWidget::loadTexture(const QString &path)
     QFile file(path);
 
     QImage image, texture;
-    if(!file.exists()) return -1;
+    if(!file.exists()) { return -1;}
     image.load(file.fileName());
     texture = QGLWidget::convertToGLFormat(image);
-
     //Put your code here
     GLuint id = 0;
     glGenTextures(1, &id);
@@ -82,7 +81,8 @@ void ParticleWidget::initializeGL()
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
-    m_emitter = new ParticleEmitter(loadTexture(":/textures/particle1.bmp"));
+
+    m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"));
 
     glDisable(GL_DITHER);
     glDisable(GL_LIGHTING);

@@ -211,6 +211,7 @@ void GLWidget::paintGL()
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
     glColor3f(1.0f, .5f, 0.0f);
     renderTarget();
     glPushMatrix();
@@ -345,23 +346,21 @@ void GLWidget::paintGL()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    /* PARTICLES */
+        //glDepthMask(GL_FALSE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color & depth buffers
+        m_emitter->drawParticles();         //Draw the particles
 
-    //glDepthMask(GL_FALSE);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //  create trailers
+    //    glAccum(GL_MULT, .5f);
+    //    glAccum(GL_ACCUM, .5f);
+    //    glAccum(GL_RETURN, 1.f);
 
-    //m_emitter->updateParticles();       //Move the particles
-    //m_emitter->drawParticles();         //Draw the particles
+        glDepthMask(GL_TRUE);
+        glFlush();
+    //    swapBuffers();
 
-    //create trailers
-    //glAccum(GL_MULT, .5f);
-    //glAccum(GL_ACCUM, .5f);
-    //glAccum(GL_RETURN, 1.f);
-
-    //glDepthMask(GL_TRUE);
-    //glFlush();
-    //swapBuffers();
 }
 
 /**
@@ -637,20 +636,9 @@ void GLWidget::setTargetPosition(Vector3 pos)
 void GLWidget::tick()
 {
     m_increment++;
+    m_emitter->updateParticles();         //Draw the particles
     update();
-    glDepthMask(GL_FALSE);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-   //create trailers
-    //glAccum(GL_MULT, .5f);
-    //glAccum(GL_ACCUM, .5f);
-    //glAccum(GL_RETURN, 1.f);
-
-    m_emitter->updateParticles();       //Move the particles
-    m_emitter->drawParticles();         //Draw the particles
-
-    glDepthMask(GL_TRUE);
-    glFlush();
 
     if(m_increment/(float) m_fps > 1.0f)
     {
