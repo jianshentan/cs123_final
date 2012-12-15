@@ -2,12 +2,13 @@
 #include "glwidget.h"
 #include "settings.h"
 #include <math.h>
+#include <iostream>
 
 
 #include <stdio.h>
 using namespace std;
 
-GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_targetRadius(0.5), m_score(0), m_canCollide(false)
+GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_score(0), m_canCollide(false)
 {
 
     // Set up the camera
@@ -20,14 +21,18 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
     m_timer.start(1000.0f / m_fps);
 
-    this->setMouseTracking(true);
-    m_originalMouseX = -1;
-    m_originalMouseY = -1;
+    //this->setMouseTracking(true);
+    //m_originalMouseX = -1;
+    //m_originalMouseY = -1;
 
     m_arrowPos = Vector3(0,0,1.f);
-    m_targetPos = m_arrowPos;
     m_arrowhit = false;
     m_fired = false;
+
+    m_target = new target();
+    m_target->setRadius(.5f);
+    m_target->setTargetPosition(Vector3(0, 0, 3.f));
+
 }
 
 GLWidget::~GLWidget()
@@ -35,54 +40,7 @@ GLWidget::~GLWidget()
     gluDeleteQuadric(m_quadric);
 }
 
-/**
-  Renders the target and sets its position and size via m_targetPos and m_targetRadius
-  You have to fill in this method
-  **/
-void GLWidget::renderTarget()
-{
-    //TODO: implement this method
-    glPushMatrix();
 
-    glTranslatef(0, 0, 3);
-
-    glBegin(GL_TRIANGLES);
-
-    float a = 10;
-
-    for (int i = 0; i < a ; i++)
-    {
-        glVertex3f(0.5 * cos ((i + 1) * (2 * M_PI)/a), 0.5 * sin ((i + 1) * (2 * M_PI/a)), 0);
-        glVertex3f(0.5 * cos (i * (2 * M_PI)/a), 0.5 * sin (i * (2 * M_PI/a)),0);
-        glVertex3f(0, 0, 0);
-    }
-
-    glEnd();
-
-    glPopMatrix();
-
-    setTargetPosition(Vector3(0, 0, 3));
-
-}
-
-/**
-  Method to render the intersection sphere for the target
-  You need to fill in this method
-  **/
-void GLWidget::renderTargetSphere()
-{
-    //TODO: implement this method
-    Vector3 targetPos = getTargetPosition();
-    float targetRadius = getTargetRadius();
-
-    glPushMatrix();
-    glTranslatef(targetPos.x, targetPos.y, targetPos.z);
-    glScalef(targetRadius, targetRadius, targetRadius);
-
-    gluSphere(m_quadric, 1.0, 10, 10);
-
-    glPopMatrix();
-}
 
 /**
   Method to render the intersection sphere for the arrow
@@ -213,7 +171,7 @@ void GLWidget::paintGL()
 
 
     glColor3f(1.0f, .5f, 0.0f);
-    renderTarget();
+    m_target->renderTarget();
     glPushMatrix();
 
     //transform to get to camera coordinates to render the arrow
@@ -255,7 +213,7 @@ void GLWidget::paintGL()
     //m_arrowPos.y -= time*.3f;
 
     //look for a hit, and if we find one, stop the arrow
-    if(m_canCollide && (m_arrowPos - m_targetPos).length() < m_arrowRadius + m_targetRadius)
+    if(m_canCollide && (m_arrowPos - m_target->getTargetPosition()).length() < m_arrowRadius + m_target->getRadius() && !m_arrowhit)
     {
         m_arrowhit = true;
         m_canCollide = false;
@@ -264,6 +222,8 @@ void GLWidget::paintGL()
         m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
                                         float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                         float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
+
+        cout << "hi there" <<endl;
         //m_timer.stop();
     }
 
@@ -274,6 +234,7 @@ void GLWidget::paintGL()
     glRotatef(m_firedAngleY, cmx, 0.0f, smx);
     glRotatef(-m_firedAngleX, 0.0f, 1.0f, 0.0f);
     glTranslatef(-0.5, 0, 1.0 + time);
+
     if(!m_fired)
     {
         glRotatef(30, 0.0f, 1.0f, 0.0f);
@@ -288,6 +249,7 @@ void GLWidget::paintGL()
     //renderArrow();
     glPopMatrix();
     renderArrowSphere();
+
 
     //render the walls, floor and ceiling of our playing field
     glColor3f(0.0f, 0.7f, 0.93f);
@@ -341,7 +303,7 @@ void GLWidget::paintGL()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glColor3f(0.5f, 0.5f, 0.5f);
 
-        renderTargetSphere();
+        m_target->renderTargetSphere(m_quadric);
 
         //renderArrowSphere();
 
@@ -426,7 +388,6 @@ void GLWidget::renderQuad()
     glVertex3f(0.0f, 0.0f, 0.0f);
     glVertex3f(0.0f, 1.0f, 0.0f);
 
-
     glEnd();
 }
 
@@ -483,6 +444,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        this->updateCamera();
         m_angleY -= 2.5f;
         //this->rotateCamera(0.f, 15.f);
+//        this->updateCamera();
         this->update();
     }
     else if(event->key() == Qt::Key_S)
@@ -492,6 +454,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        this->updateCamera();
         //this->rotateCamera(0.f, -15.f);
         m_angleY += 2.5f;
+        //this->updateCamera();
 
         this->update();
     }
@@ -502,7 +465,7 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 //        this->updateCamera();
         //this->rotateCamera(15.f, 0.f);
         m_angleX += 2.5f;
-
+//        this->updateCamera();
         this->update();
     }
     else if(event->key() == Qt::Key_A)
@@ -512,19 +475,14 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
         //this->rotateCamera(-5.f, 0.f);
 //        this->updateCamera();
         m_angleX -= 2.5f;
-
+//        this->updateCamera();
         this->update();
     }
-    /*float x = event->globalX();
-    float y = event->globalY();
-    rotateCamera(x - m_originalMouseX, y-m_originalMouseY);
-    update();*/
+
 
     else if(event->key() == Qt::Key_Escape)
     {
         m_firstPersonMode = false;
-        m_originalMouseX = -1;
-        m_originalMouseY = -1;
     }
 }
 
@@ -560,16 +518,16 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     if(!m_firstPersonMode){
         m_firstPersonMode = true;
-        m_originalMouseX = event->globalX() - event->x() + this->width()/2;
-        m_originalMouseY = event->globalY() - event->y() + this->height()/2;
-        QCursor::setPos(m_originalMouseX, m_originalMouseY);
+        //m_originalMouseX = event->globalX() - event->x() + this->width()/2;
+        //m_originalMouseY = event->globalY() - event->y() + this->height()/2;
+        //QCursor::setPos(m_originalMouseX, m_originalMouseY);
     }
     else {
         m_arrowhit = false;
         m_canCollide = true;
 
-        m_originalMouseX = event->globalX();
-        m_originalMouseY = event->globalY();
+//        m_originalMouseX = event->globalX();
+//        m_originalMouseY = event->globalY();
         m_fired = true;
         m_increment = 0.0f;
 
@@ -618,15 +576,6 @@ void GLWidget::updateSettings()
 void GLWidget::setLabel(QLabel* label)
 {
     m_scoreLabel = label;
-}
-
-/**
-  Sets the position of the target, and notifies the system that we are ready to attempt collisions
-  **/
-void GLWidget::setTargetPosition(Vector3 pos)
-{
-    m_canCollide = true;
-    m_targetPos = pos;
 }
 
 /**

@@ -9,6 +9,7 @@
 #include <QLabel>
 #include "camera.h"
 #include "particleemitter.h"
+#include "target.h"
 
 class GLWidget : public QGLWidget
 {
@@ -46,9 +47,9 @@ private:
     void renderArrow();
     void renderBow();
     void setTargetPosition(Vector3 pos);
-    Vector3 getTargetPosition() { return m_targetPos; }
+    //Vector3 getTargetPosition() { return m_targetPos; }
     Vector3 getArrowPosition() { return m_arrowPos; }
-    float getTargetRadius() { return m_targetRadius; }
+    //float getTargetRadius() { return m_targetRadius; }
     float getArrowRadius() { return m_arrowRadius; }
 
 
@@ -76,8 +77,8 @@ private:
     float m_arrowRadius;
 
     //This vector will be initialized to 0,0,0. You will need to set it in the renderTarget method
-    Vector3 m_targetPos;
-    float m_targetRadius;
+
+    target *m_target;
 
 
     // particle stuff
