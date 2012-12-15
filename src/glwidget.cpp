@@ -198,6 +198,7 @@ void GLWidget::paintGL()
 {
     // Get the time
     float time = 5*m_increment / (float) m_fps;
+    m_emitter->updateParticles();         //Draw the particles
 
     //if we haven't fired yet, update the angles so that the arrow's angles and position match the cameras
     if(!m_fired)
@@ -636,8 +637,8 @@ void GLWidget::setTargetPosition(Vector3 pos)
 void GLWidget::tick()
 {
     m_increment++;
-    m_emitter->updateParticles();         //Draw the particles
     update();
+    repaint();
 
 
     if(m_increment/(float) m_fps > 1.0f)
