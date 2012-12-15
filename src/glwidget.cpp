@@ -3,6 +3,7 @@
 #include "settings.h"
 #include <math.h>
 #include <iostream>
+#include <vector>
 
 
 #include <stdio.h>
@@ -10,7 +11,6 @@ using namespace std;
 
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_score(0), m_canCollide(false)
 {
-
     // Set up the camera
     m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -1.0f;
     m_camera.center.x = 0.0f, m_camera.center.y = 0.0f, m_camera.center.z = 0.0f;
@@ -29,15 +29,25 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
 
-    m_target = new target();
-    m_target->setRadius(.5f);
-    m_target->setTargetPosition(Vector3(0, 0, 3.f));
+    target *curtarget = new target();
+    curtarget->setRadius(.5f);
+    curtarget->setTargetPosition(Vector3(0, 0, 3.f));
+    m_targets.push_back(curtarget);
+    curtarget = new target();
+    curtarget->setRadius(.5f);
+    curtarget->setTargetPosition(Vector3(0, .5f, 3.f));
+    m_targets.push_back(curtarget);
 
 }
 
 GLWidget::~GLWidget()
 {
     gluDeleteQuadric(m_quadric);
+    int numtargets = m_targets.size();
+    for (int i = 0; i < numtargets; i++) {
+        target *curtarget = m_targets.at(i);
+        delete curtarget;
+    }
 }
 
 
@@ -129,7 +139,7 @@ GLuint GLWidget::loadTexture(const QString &path)
     QFile file(path);
 
     QImage image, texture;
-    if(!file.exists()) { return -1;}
+    if(!file.exists()) { return -1; }
     image.load(file.fileName());
     texture = QGLWidget::convertToGLFormat(image);
     //Put your code here
@@ -170,13 +180,21 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glColor3f(1.0f, .5f, 0.0f);
-    m_target->renderTarget();
-    glPushMatrix();
+
+    int numtargets = m_targets.size();
+    for (int i = 0; i < numtargets; i++) {
+        target *curtarget = m_targets.at(i);
+        curtarget->renderTargetSphere(m_quadric);
+    }
+
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    glPushMatrix();
 
     //transform to get to camera coordinates to render the arrow
     glTranslatef(-m_xDiff, 0.0f, -m_zDiff);
-    glRotatef(m_angleY, cos(M_PI*m_angleX/180), 0.0f, sin(M_PI*m_angleX/180));
+    glRotatef(m_angleY, cos(M_PI*m_angleX / 180), 0.0f, sin(M_PI*m_angleX/180));
     glRotatef(-m_angleX, 0.0f, 1.0f, 0.0f);
 
     glRotatef(15, 0.0f, 1.0f, 0.0f);
@@ -213,20 +231,22 @@ void GLWidget::paintGL()
     //m_arrowPos.y -= time*.3f;
 
     //look for a hit, and if we find one, stop the arrow
-    if(m_canCollide && (m_arrowPos - m_target->getTargetPosition()).length() < m_arrowRadius + m_target->getRadius() && !m_arrowhit)
-    {
-        m_arrowhit = true;
-        m_canCollide = false;
-        float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
-        m_scoreLabel->setText("Score: " + QString::number(++m_score));
-        m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
-                                        float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
-                                        float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
-
-        cout << "hi there" <<endl;
-        //m_timer.stop();
+    //bool collision = m_target->testCollide(m_arrowPos, m_arrowRadius);
+    if (m_canCollide && !m_arrowhit) {
+        int numtargets = m_targets.size();
+        for (int i = 0; i < numtargets; i++) {
+            target *curtarget = m_targets.at(i);
+            //if (curtarget->testCollide(m_arrowPos, m_arrowRadius)) {
+                m_arrowhit = true;
+                m_canCollide = false;
+                float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
+                m_scoreLabel->setText("Score: " + QString::number(++m_score));
+                m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
+                                                float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
+                                                float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
+            //}
+        }
     }
-
 
 
     //transform to get to camera coordinates to render the arrow
@@ -300,14 +320,17 @@ void GLWidget::paintGL()
     //if(m_canCollide && settings.showIntersectSpheres)
     if(settings.showIntersectSpheres)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glColor3f(0.5f, 0.5f, 0.5f);
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//        glColor3f(0.5f, 0.5f, 0.5f);
 
-        m_target->renderTargetSphere(m_quadric);
+//        int numtargets = m_targets.size();
+//        for (int i = 0; i < numtargets; i++) {
+//            target *curtarget = m_targets.at(i);
+//            curtarget->renderTargetSphere(m_quadric);
+//        }
 
-        //renderArrowSphere();
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     /* PARTICLES */
