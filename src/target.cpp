@@ -1,9 +1,16 @@
 #include "target.h"
+#include <iostream>
+#include <stdio.h>
+#include <math.h>
+#include <QLabel>
+using namespace std;
 
-target::target()
+target::target(Vector3 pos, float rad, Vector3 color)
 {
     m_canCollide = false;
-    m_targetPos = Vector3(0, 0, 0);
+    m_targetPos = pos;
+    m_targetRadius = rad;
+    m_color = color;
 }
 
 target::~target()
@@ -19,13 +26,11 @@ void target::renderTarget()
 {
     //TODO: implement this method
     glPushMatrix();
-
-    glTranslatef(0, 0, 3);
-
+    glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
+    glColor3f(m_color.x, m_color.y, m_color.z);
     glBegin(GL_TRIANGLES);
 
     float a = 10;
-
     for (int i = 0; i < a ; i++)
     {
         glVertex3f(0.5 * cos ((i + 1) * (2 * M_PI)/a), 0.5 * sin ((i + 1) * (2 * M_PI/a)), 0);
@@ -34,11 +39,8 @@ void target::renderTarget()
     }
 
     glEnd();
-
     glPopMatrix();
-
-    setTargetPosition(Vector3(0, 0, 3));
-
+    //setTargetPosition(m_targetPos);
 }
 
 
@@ -62,12 +64,18 @@ void target::renderTargetSphere(GLUquadric *quadric)
 /**
   Sets the position of the target, and notifies the system that we are ready to attempt collisions
   **/
-void target::setTargetPosition(Vector3 pos)
+//void target::setTargetPosition(Vector3 pos)
+//{
+//    m_canCollide = true;
+//    m_targetPos = pos;
+//}
+
+void target::setRadius(float rad)
 {
-    m_canCollide = true;
-    m_targetPos = pos;
+    m_targetRadius = rad;
 }
 
-void target::setRadius(float rad) {
-    m_targetRadius = rad;
+bool target::testCollide(Vector3 arrowPos, float arrowRad)
+{
+
 }
