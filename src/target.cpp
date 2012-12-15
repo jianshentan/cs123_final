@@ -77,5 +77,8 @@ void target::setRadius(float rad)
 
 bool target::testCollide(Vector3 arrowPos, float arrowRad)
 {
-
+    if ((arrowPos - m_targetPos).length() < arrowRad + m_targetRadius)
+        return true;
+    else
+        return false;
 }

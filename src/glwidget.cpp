@@ -29,13 +29,9 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
 
-    target *curtarget = new target();
-    curtarget->setRadius(.5f);
-    curtarget->setTargetPosition(Vector3(0, 0, 3.f));
+    target *curtarget = new target(Vector3(0,0,3.f), .5f, Vector3(0.f, 1.f, .3f));
     m_targets.push_back(curtarget);
-    curtarget = new target();
-    curtarget->setRadius(.5f);
-    curtarget->setTargetPosition(Vector3(0, .5f, 3.f));
+    curtarget = new target(Vector3(0, .5f, 3.f), .5f, Vector3(0.f, 1.f, .3f));
     m_targets.push_back(curtarget);
 
 }
@@ -180,17 +176,17 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glColor3f(1.0f, .5f, 0.0f);
-
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPushMatrix();
     int numtargets = m_targets.size();
     for (int i = 0; i < numtargets; i++) {
         target *curtarget = m_targets.at(i);
         curtarget->renderTargetSphere(m_quadric);
     }
+    glPopMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    glPushMatrix();
+    glPushMatrix();
 
     //transform to get to camera coordinates to render the arrow
     glTranslatef(-m_xDiff, 0.0f, -m_zDiff);
@@ -236,7 +232,7 @@ void GLWidget::paintGL()
         int numtargets = m_targets.size();
         for (int i = 0; i < numtargets; i++) {
             target *curtarget = m_targets.at(i);
-            //if (curtarget->testCollide(m_arrowPos, m_arrowRadius)) {
+            if (curtarget->testCollide(m_arrowPos, m_arrowRadius)) {
                 m_arrowhit = true;
                 m_canCollide = false;
                 float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
@@ -244,7 +240,7 @@ void GLWidget::paintGL()
                 m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
                                                 float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                                 float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
-            //}
+            }
         }
     }
 
