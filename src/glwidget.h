@@ -33,6 +33,7 @@ protected:
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     GLuint loadTexture(const QString& path);
+    void makeEnvironment();
 
 
 
