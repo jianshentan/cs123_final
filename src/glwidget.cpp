@@ -29,11 +29,11 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
 
-    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(0.f, 1.f, .3f));
+    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(0.f, 1.f, .3f), m_texture_targets);
     m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(0.f, 1.f, .3f));
+    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(0.f, 1.f, .3f), m_texture_targets);
     m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f));
+    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f), m_texture_targets);
     m_targets.push_back(curtarget);
 
 
@@ -138,6 +138,11 @@ void GLWidget::initializeGL()
     // Load the initial settings
     updateSettings();
     updateCamera();
+
+
+    //load textures for environment
+    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
+    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 }
 
 GLuint GLWidget::loadTexture(const QString &path)
@@ -243,7 +248,7 @@ void GLWidget::paintGL()
                                                 float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
                 m_emitters.push_back(emitter);
 
-                target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f));
+                target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f), m_texture_targets);
                 m_targets.push_back(curtarget);
                 break;
             }
@@ -262,7 +267,7 @@ void GLWidget::paintGL()
     glTranslatef(-5.0f, -1.0f, 5.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 0.0f, 1.0f, 0.0f);
-    renderQuad();
+    renderQuad(m_texture_backwall);
     glPopMatrix();
 
     /* not in sight */
@@ -278,7 +283,7 @@ void GLWidget::paintGL()
     glTranslatef(-5.0f, 9.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
-    renderQuad();
+    renderQuad(m_texture_backwall);
     glPopMatrix();
 
     /* left wall */
@@ -286,7 +291,7 @@ void GLWidget::paintGL()
     glTranslatef(5.0f, 9.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
-    renderQuad();
+    renderQuad(m_texture_backwall);
     glPopMatrix();
 
     /* not in sight */
@@ -303,7 +308,7 @@ void GLWidget::paintGL()
     glTranslatef(5.0f, -1.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 0.0f, 0.0f, 1.0f);
-    renderQuad();
+    renderQuad(m_texture_backwall);
     glPopMatrix();
 
     /* PARTICLES */
@@ -375,22 +380,34 @@ void GLWidget::renderBow(){
 /**
   renders a quad that is visible from both front and back
   **/
-void GLWidget::renderQuad()
+void GLWidget::renderQuad(GLuint textureID)
 {
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glBegin(GL_QUADS);
+
     glNormal3f(1.0f, 0.0f, 0.0f);
+        glTexCoord2f(0.f, 1.0f);
     glVertex3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(0.f, 0.0f);
     glVertex3f(0.0f, 0.0f, 0.0f);
+        glTexCoord2f(1.f, 0.0f);
     glVertex3f(0.0f, 0.0f, 1.0f);
+        glTexCoord2f(1.0f, 1.0f);
     glVertex3f(0.0f, 1.0f, 1.0f);
 
     glNormal3f(-1.0f, 0.0f, 0.0f);
+        glTexCoord2f(0.f, 1.0f);
     glVertex3f(0.0f, 1.0f, 1.0f);
+        glTexCoord2f(0.f, 0.0f);
     glVertex3f(0.0f, 0.0f, 1.0f);
+        glTexCoord2f(1.f, 0.0f);
     glVertex3f(0.0f, 0.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f);
     glVertex3f(0.0f, 1.0f, 0.0f);
 
     glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 
 /**
