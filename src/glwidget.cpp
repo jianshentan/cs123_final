@@ -29,9 +29,9 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
 
-    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
-    m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texture_targets);
+    m_target_win = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
+
+    target *curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texture_targets);
     m_targets.push_back(curtarget);
     curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
     m_targets.push_back(curtarget);
@@ -196,6 +196,10 @@ void GLWidget::paintGL()
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // ==== render targets =====
+    m_target_win->renderTarget(m_quadric);
+    if (settings.showIntersectSpheres)
+        m_target_win->renderTargetSphere(m_quadric);
 
     glPushMatrix();
     int numtargets = m_targets.size();
@@ -206,6 +210,7 @@ void GLWidget::paintGL()
             curtarget->renderTargetSphere(m_quadric);
     }
     glPopMatrix();
+    // =========================
 
     glPushMatrix();
     //transform to get to camera coordinates to render the arrow
@@ -236,6 +241,10 @@ void GLWidget::paintGL()
 
     //look for a hit, and if we find one, stop the arrow
     //bool collision = m_target->testCollide(m_arrowPos, m_arrowRadius);
+
+    if (m_target_win->testCollide(m_arrowPos, m_arrowRadius))
+        win();
+
     if (m_canCollide && !m_arrowhit) {
         int numtargets = m_targets.size();
         for (int i = 0; i < numtargets; i++) {
@@ -587,4 +596,8 @@ void GLWidget::makeEnvironment()
     renderQuad(m_texture_backwall);
     glPopMatrix();
 
+}
+
+void GLWidget::win()
+{
 }

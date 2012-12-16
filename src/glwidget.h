@@ -54,6 +54,9 @@ private:
     //float getTargetRadius() { return m_targetRadius; }
     float getArrowRadius() { return m_arrowRadius; }
 
+    //winning mthod
+    void win();
+
 
     GLUquadric *m_quadric;
     LabCamera m_camera;
@@ -82,6 +85,7 @@ private:
     //This vector will be initialized to 0,0,0. You will need to set it in the renderTarget method
 
     std::vector<target *> m_targets;
+    target *m_target_win;
 
     // particle stuff
     std::vector<ParticleEmitter *> m_emitters;

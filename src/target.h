@@ -16,7 +16,7 @@ public:
     void renderTarget(GLUquadric *quadric);
     void renderTargetSphere(GLUquadric *quadric);
     void setTargetPosition(Vector3 pos);
-    bool testCollide(Vector3 arrowPos, float arrowRad);
+    virtual bool testCollide(Vector3 arrowPos, float arrowRad);
     Vector3 getTargetPosition() { return m_targetPos; }
     bool getCanCollide() { return m_canCollide; }
     float getRadius() {return m_targetRadius;}
