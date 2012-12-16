@@ -141,6 +141,11 @@ void GLWidget::initializeGL()
     // Load the initial settings
     updateSettings();
     updateCamera();
+
+
+    //load textures for environment
+    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
+    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 }
 
 GLuint GLWidget::loadTexture(const QString &path)
