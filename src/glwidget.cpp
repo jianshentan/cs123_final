@@ -15,7 +15,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -1.0f;
     m_camera.center.x = 0.0f, m_camera.center.y = 0.0f, m_camera.center.z = 0.0f;
     m_camera.up.x = 0.0f, m_camera.up.y = 1.0f, m_camera.up.z = 0.0f;
-    m_camera.fovy = 50.0f, m_camera.near = 1.0f, m_camera.far = 1000.0f;
+    m_camera.fovy = 50.0f, m_camera.near = .5f, m_camera.far = 1000.0f;
 
     // Set up 60 FPS draw loop
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
@@ -25,15 +25,16 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     //m_originalMouseX = -1;
     //m_originalMouseY = -1;
 
-    m_arrowPos = Vector3(0,0,1.f);
+    m_arrowPos = Vector3(0,-.5f,0);
     m_arrowhit = false;
     m_fired = false;
 
-    target *curtarget = new target(Vector3(0,0,3.f), .5f, Vector3(0.f, 1.f, .3f));
+    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(0.f, 1.f, .3f));
     m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, .5f, 3.f), .5f, Vector3(0.f, 1.f, .3f));
+    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(0.f, 1.f, .3f));
     m_targets.push_back(curtarget);
-
+    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f));
+    m_targets.push_back(curtarget);
 }
 
 GLWidget::~GLWidget()
@@ -161,7 +162,7 @@ void GLWidget::paintGL()
 {
     // Get the time
     float time = m_increment++ / (float) m_fps;
-    if (m_arrowhit)
+    if (m_emitter)
         m_emitter->updateParticles();         //Draw the particles
 
     //if we haven't fired yet, update the angles so that the arrow's angles and position match the cameras
@@ -176,18 +177,17 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glPushMatrix();
     int numtargets = m_targets.size();
     for (int i = 0; i < numtargets; i++) {
         target *curtarget = m_targets.at(i);
-        curtarget->renderTargetSphere(m_quadric);
+        curtarget->renderTarget();
+        if (settings.showIntersectSpheres)
+            curtarget->renderTargetSphere(m_quadric);
     }
     glPopMatrix();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glPushMatrix();
-
     //transform to get to camera coordinates to render the arrow
     glTranslatef(-m_xDiff, 0.0f, -m_zDiff);
     glRotatef(m_angleY, cos(M_PI*m_angleX / 180), 0.0f, sin(M_PI*m_angleX/180));
@@ -197,7 +197,7 @@ void GLWidget::paintGL()
 
     glTranslatef(-0.8f, 0.5f, -2.5f);
     glScalef(2.5f, 2.5f, 2.5f);
-    renderBow();
+    //renderBow();
 
     glPopMatrix();
     glPushMatrix();
@@ -226,35 +226,18 @@ void GLWidget::paintGL()
 
                 float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
                 m_scoreLabel->setText("Score: " + QString::number(++m_score));
-                m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
+                m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.jpg"), position,
                                                 float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
-                                                float3(0.0f, 0.0001f, 0.0f), .1f, 50.0f, 1.f/10000.0f, 1000);
+                                                float3(0.0f, 0.0001f, 0.0f), .5f, 50.0f, 1.f/10000.0f, 30);
+                target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f));
+                m_targets.push_back(curtarget);
             }
         }
     }
 
-
-    //transform to get to camera coordinates to render the arrow
-    //glTranslatef(-m_firedXDiff, 0.0f, -m_firedZDiff);
-    //glRotatef(m_firedAngleY, cmx, 0.0f, smx);
-    //glRotatef(-m_firedAngleX, 0.0f, 1.0f, 0.0f);
-    //glTranslatef(-0.5, 0, 1.0 + time);
-
-    if(!m_fired)
-    {
-        glRotatef(30, 0.0f, 1.0f, 0.0f);
-    }
-    //move and rotate to make the arrow face straight
-    else
-    {
-        glTranslatef(qMin(0.5f*time, 0.5f), 0.0f, qMax(-0.7f, -1.0f*time));
-        //glRotatef(qMax(15.0f-(time*30), 0.5f), 0.0f, 1.0f, 0.0f);
-    }
-
-    //renderArrow();
-    glPopMatrix();
-    renderArrowSphere();
-
+    //render arrow object
+    if (!m_arrowhit)
+        renderArrowSphere();
 
     //render the walls, floor and ceiling of our playing field
     glColor3f(0.0f, 0.7f, 0.93f);
@@ -301,26 +284,8 @@ void GLWidget::paintGL()
     renderQuad();
     glPopMatrix();
 
-    //Render intersection spheres
-    //if(m_canCollide && settings.showIntersectSpheres)
-    if(settings.showIntersectSpheres)
-    {
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//        glColor3f(0.5f, 0.5f, 0.5f);
-
-//        int numtargets = m_targets.size();
-//        for (int i = 0; i < numtargets; i++) {
-//            target *curtarget = m_targets.at(i);
-//            curtarget->renderTargetSphere(m_quadric);
-//        }
-
-
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-
     /* PARTICLES */
-    if (m_arrowhit)
-    {
+    if (m_emitter) {
         glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         m_emitter->drawParticles();         //Draw the particles
@@ -332,18 +297,12 @@ void GLWidget::paintGL()
 
         glDepthMask(GL_TRUE);
         glFlush();
-//      swapBuffers();
+        glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
+    //  swapBuffers();
+        glDepthMask(GL_TRUE);
     }
 }
 
-/**
-  This method renders an arrow created via composition of glu objects
-  **/
-void GLWidget::renderArrow()
-{
-    glColor3f(0.0f, 0.7f, 0.0f);
-    gluSphere(m_quadric, 0.3f, 10, 10);
-}
 
 /**
   Renders the bow object
@@ -505,20 +464,14 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     if(!m_firstPersonMode){
         m_firstPersonMode = true;
-        //m_originalMouseX = event->globalX() - event->x() + this->width()/2;
-        //m_originalMouseY = event->globalY() - event->y() + this->height()/2;
-        //QCursor::setPos(m_originalMouseX, m_originalMouseY);
     }
     else {
         m_arrowhit = false;
         m_canCollide = true;
-
-//        m_originalMouseX = event->globalX();
-//        m_originalMouseY = event->globalY();
         m_fired = true;
         m_increment = 0.0f;
 
-        m_arrowPos =  Vector3(-m_firedXDiff, 0.0f, -m_firedZDiff);
+        m_arrowPos =  Vector3(-m_firedXDiff, -.5f, -m_firedZDiff);
         double cx = cos(-m_angleX * M_PI/180);
         double sx = sin(-m_angleX * M_PI/180);
         double cy = cos(m_angleY * M_PI/180);

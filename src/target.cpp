@@ -53,11 +53,13 @@ void target::renderTargetSphere(GLUquadric *quadric)
     //TODO: implement this method
 
     glPushMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glColor3f(m_color.x, m_color.y, m_color.z);
     glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glScalef(m_targetRadius, m_targetRadius, m_targetRadius);
 
     gluSphere(quadric, 1.0, 10, 10);
-
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glPopMatrix();
 }
 
