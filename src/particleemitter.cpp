@@ -81,6 +81,9 @@ void ParticleEmitter::updateParticles()
             cur->life -= cur->decay;
             if (cur->life < 0)
                 cur->active = false;
+
+            //fake gravity
+            cur->dir.y -= 2.0f;
         }
     }
 }
