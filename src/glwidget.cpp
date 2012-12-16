@@ -203,28 +203,16 @@ void GLWidget::paintGL()
     glPushMatrix();
 
     //start arrow off at fired position i.e. camera position when the arrow was fired or current camera position if it hasn't been fired
-    m_arrowPos =  Vector3(-m_firedXDiff, 0.0f, -m_firedZDiff);
     //set the velocity to reflect the rotation transforms we do to render the arrow
     //we keep variables for all the values we need for this to simplify the velocity vector
-    double cx = cos(-m_firedAngleX * M_PI/180);
-    double sx = sin(-m_firedAngleX * M_PI/180);
-    double cy = cos(m_firedAngleY * M_PI/180);
-    double omcy = 1.0-cy;
-    double sy = sin(m_firedAngleY * M_PI/180);
 
-    double cmx = cos(M_PI*m_firedAngleX/180);
-    double smx = sin(M_PI*m_firedAngleX/180);
-
-    //calculates through the rotates done to get an accurate velocity vector
-    Vector3 vel = Vector3((sx*((cmx*cmx*omcy) + cy)) + (cx*cmx*smx*omcy),
-                          (sx*smx*sy) - (cx*cmx*sy),
-                          (sx*cmx*smx*omcy) + (cx*((smx*smx*omcy) + cy)));
 
     //move the arrow's position based on velocity and time
-    if (m_fired)
-        m_arrowPos += time*vel;
-    //fake gravity
-    //m_arrowPos.y -= time*.3f;
+
+    if (m_fired) {
+        m_arrowVel.y -= time * .1f;
+        m_arrowPos += m_arrowVel;
+    }
 
     //look for a hit, and if we find one, stop the arrow
     //bool collision = m_target->testCollide(m_arrowPos, m_arrowRadius);
@@ -235,6 +223,7 @@ void GLWidget::paintGL()
             if (curtarget->testCollide(m_arrowPos, m_arrowRadius)) {
                 m_arrowhit = true;
                 m_canCollide = false;
+
                 float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
                 m_scoreLabel->setText("Score: " + QString::number(++m_score));
                 m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.bmp"), position,
@@ -246,10 +235,10 @@ void GLWidget::paintGL()
 
 
     //transform to get to camera coordinates to render the arrow
-    glTranslatef(-m_firedXDiff, 0.0f, -m_firedZDiff);
-    glRotatef(m_firedAngleY, cmx, 0.0f, smx);
-    glRotatef(-m_firedAngleX, 0.0f, 1.0f, 0.0f);
-    glTranslatef(-0.5, 0, 1.0 + time);
+    //glTranslatef(-m_firedXDiff, 0.0f, -m_firedZDiff);
+    //glRotatef(m_firedAngleY, cmx, 0.0f, smx);
+    //glRotatef(-m_firedAngleX, 0.0f, 1.0f, 0.0f);
+    //glTranslatef(-0.5, 0, 1.0 + time);
 
     if(!m_fired)
     {
@@ -259,7 +248,7 @@ void GLWidget::paintGL()
     else
     {
         glTranslatef(qMin(0.5f*time, 0.5f), 0.0f, qMax(-0.7f, -1.0f*time));
-        glRotatef(qMax(15.0f-(time*30), 0.5f), 0.0f, 1.0f, 0.0f);
+        //glRotatef(qMax(15.0f-(time*30), 0.5f), 0.0f, 1.0f, 0.0f);
     }
 
     //renderArrow();
@@ -458,43 +447,22 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
     double sx = sin(-m_angleX * M_PI/180);
     if(event->key() == Qt::Key_W)
     {
-//        m_zDiff -= 0.025f * cx;
-//        m_xDiff -= 0.025f * sx;
-//        this->updateCamera();
         m_angleY -= 2.5f;
-        //this->rotateCamera(0.f, 15.f);
-//        this->updateCamera();
         this->update();
     }
     else if(event->key() == Qt::Key_S)
     {
-//        m_zDiff += 0.025f * cx;
-//        m_xDiff += 0.025f * sx;
-//        this->updateCamera();
-        //this->rotateCamera(0.f, -15.f);
         m_angleY += 2.5f;
-        //this->updateCamera();
-
         this->update();
     }
     else if(event->key() == Qt::Key_D)
     {
-//        m_zDiff += 0.025f * -sx;
-//        m_xDiff += 0.025f * cx;
-//        this->updateCamera();
-        //this->rotateCamera(15.f, 0.f);
         m_angleX += 2.5f;
-//        this->updateCamera();
         this->update();
     }
     else if(event->key() == Qt::Key_A)
     {
-//        m_zDiff -= 0.025f * -sx;
-//        m_xDiff -= 0.025f * cx;
-        //this->rotateCamera(-5.f, 0.f);
-//        this->updateCamera();
         m_angleX -= 2.5f;
-//        this->updateCamera();
         this->update();
     }
 
@@ -550,20 +518,20 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         m_fired = true;
         m_increment = 0.0f;
 
-        /*if(m_increment == 0.0f)
-        {
-            //start the timer if the increment is 0
-            //m_active = true;
-            m_fired = true;
-        }
-        else
-        {
-            //reset the timer
-            m_increment = 0.0f;
-            m_fired = false;
-            //m_active = false;
-            //m_timer.stop();
-        }*/
+        m_arrowPos =  Vector3(-m_firedXDiff, 0.0f, -m_firedZDiff);
+        double cx = cos(-m_angleX * M_PI/180);
+        double sx = sin(-m_angleX * M_PI/180);
+        double cy = cos(m_angleY * M_PI/180);
+        double omcy = 1.0-cy;
+        double sy = sin(m_angleY * M_PI/180);
+
+        double cmx = cos(M_PI*m_angleX/180);
+        double smx = sin(M_PI*m_angleX/180);
+
+        //calculates through the rotates done to get an accurate velocity vector
+        m_arrowVel = Vector3(.5f*((sx*((cmx*cmx*omcy) + cy)) + (cx*cmx*smx*omcy)),
+                              .5f*((sx*smx*sy) - (cx*cmx*sy)),
+                              .5f*((sx*cmx*smx*omcy) + (cx*((smx*smx*omcy) + cy))));
         update();
     }
 

@@ -76,6 +76,7 @@ private:
     //This vector will automatically contain the arrow's position x,y,z coordinates
     Vector3 m_arrowPos;
     float m_arrowRadius;
+    Vector3 m_arrowVel;
 
     //This vector will be initialized to 0,0,0. You will need to set it in the renderTarget method
 
