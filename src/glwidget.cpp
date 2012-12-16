@@ -35,8 +35,6 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_targets.push_back(curtarget);
     curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f), m_texture_targets);
     m_targets.push_back(curtarget);
-
-
 }
 
 GLWidget::~GLWidget()
