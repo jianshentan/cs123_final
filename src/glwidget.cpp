@@ -35,6 +35,8 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_targets.push_back(curtarget);
     curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f));
     m_targets.push_back(curtarget);
+
+
 }
 
 GLWidget::~GLWidget()
@@ -44,6 +46,12 @@ GLWidget::~GLWidget()
     for (int i = 0; i < numtargets; i++) {
         target *curtarget = m_targets.at(i);
         delete curtarget;
+    }
+
+    //backup emitter destroyer:
+    for (int i = 0; i < m_emitters.size() ; i++)
+    {
+        delete m_emitters[i];
     }
 }
 
@@ -105,7 +113,7 @@ void GLWidget::initializeGL()
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 
     // Create particle emitter
-    m_emitter = NULL;
+    //m_emitters = NULL;
 
     glClear(GL_ACCUM_BUFFER_BIT);
 
@@ -163,8 +171,11 @@ void GLWidget::paintGL()
 {
     // Get the time
     float time = m_increment++ / (float) m_fps;
-    if (m_emitter)
-        m_emitter->updateParticles();         //Draw the particles
+    for (int i = 0 ; i < m_emitters.size() ; i++)
+    {
+        if (m_emitters[i])
+            m_emitters[i]->updateParticles();         //Draw the particles
+    }
 
     //if we haven't fired yet, update the angles so that the arrow's angles and position match the cameras
     if(!m_fired)
@@ -227,9 +238,10 @@ void GLWidget::paintGL()
 
                 float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z);
                 m_scoreLabel->setText("Score: " + QString::number(++m_score));
-                m_emitter = new ParticleEmitter(loadTexture(":/textures/beyonce_face_01.jpg"), position,
+                ParticleEmitter *emitter = new ParticleEmitter(loadTexture(":/textures/beyonceface.bmp"), position,
                                                 float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
-                                                float3(0.0f, 0.0001f, 0.0f), .5f, 50.0f, 1.f/10000.0f, 30);
+                                                float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
+                m_emitters.push_back(emitter);
                 target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f));
                 m_targets.push_back(curtarget);
                 break;
@@ -287,21 +299,34 @@ void GLWidget::paintGL()
     glPopMatrix();
 
     /* PARTICLES */
-    if (m_emitter) {
-        //glDepthMask(GL_FALSE);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        m_emitter->drawParticles();         //Draw the particles
+    for (int i = 0 ; i < m_emitters.size() ; i++)
+    {
+        if (m_emitters[i]) {
+            if (m_emitters[i]->check_for_termination())
+                //terminate
+            {
+                delete m_emitters[i];
+                break;
+            }
+            else
+            {
+                glDepthMask(GL_FALSE);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    //  create trailers
-        glAccum(GL_MULT, .5f);
-        glAccum(GL_ACCUM, .5f);
-        glAccum(GL_RETURN, 1.f);
+                m_emitters[i]->drawParticles();         //Draw the particles
 
-        //glDepthMask(GL_TRUE);
-        //glFlush();
-        glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
-        //swapBuffers();
-        glDepthMask(GL_TRUE);
+            //  create trailers
+                glAccum(GL_MULT, .5f);
+                glAccum(GL_ACCUM, .5f);
+                glAccum(GL_RETURN, 1.f);
+
+                glDepthMask(GL_TRUE);
+                //glFlush();
+                glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
+                //swapBuffers();
+                //glDepthMask(GL_TRUE);
+            }
+        }
     }
 }
 

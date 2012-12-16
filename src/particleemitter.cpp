@@ -40,11 +40,11 @@ void ParticleEmitter::resetParticle(unsigned i)
     m_particles[i].pos.z = m_position.z;
     m_particles[i].pos.y = m_position.y;
     m_particles[i].pos.x = m_position.x;
-    m_particles[i].life = 1.0f;
+    m_particles[i].life = 3.0f;
     m_particles[i].decay = urand(.01f, .06f);
     m_particles[i].color = m_color;
-    m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x));
-    m_particles[i].force.y = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.y));
+    m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x)) * 10;
+    m_particles[i].force.y = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.y)) * 10;
     m_particles[i].force.z = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.z));
     m_particles[i].dir.x = urand(-m_fuzziness, m_fuzziness + m_velocity.x);
     m_particles[i].dir.y = urand(-m_fuzziness, m_fuzziness + m_velocity.y);
@@ -86,7 +86,7 @@ void ParticleEmitter::updateParticles()
                 cur->active = false;
 
             //fake gravity
-            cur->dir.y -= 2.0f;
+            cur->dir.y -= 0.0f;
         }
     }
 }
@@ -107,6 +107,7 @@ void ParticleEmitter::drawParticles()
     for(unsigned i = 0; i < m_maxParticles; ++i)
     {
         Particle *cur = &(m_particles[i]);
+
         glColor4f(float(cur->color.r), float(cur->color.g), float(cur->color.b), float(sqrt(cur->life)));
 
         glTexCoord2f(0.f, 1.0f);
@@ -120,8 +121,17 @@ void ParticleEmitter::drawParticles()
 
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(cur->pos.x, cur->pos.y + m_scale, cur->pos.z);
-
     }
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+bool ParticleEmitter::check_for_termination()
+{
+    Particle *curr = &(m_particles[m_maxParticles]);
+    if (curr->life < 0)
+        return true;
+    else
+        return false;
+
 }

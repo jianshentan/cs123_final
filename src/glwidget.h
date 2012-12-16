@@ -83,7 +83,8 @@ private:
     std::vector<target *> m_targets;
 
     // particle stuff
-    ParticleEmitter *m_emitter;
+    std::vector<ParticleEmitter *> m_emitters;
+
 
 
 };

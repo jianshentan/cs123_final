@@ -71,6 +71,9 @@ public:
       * Each square should be in the X/Y plane at Z = the particle's position's Z-coordinate.
       */
     void drawParticles();
+
+    bool check_for_termination();
+
     /**
       * You need to fill this in.
       *
