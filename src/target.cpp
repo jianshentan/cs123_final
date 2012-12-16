@@ -5,12 +5,14 @@
 #include <QLabel>
 using namespace std;
 
-target::target(Vector3 pos, float rad, Vector3 color)
+target::target(Vector3 pos, float rad, Vector3 color, GLuint texID)
 {
     m_canCollide = false;
     m_targetPos = pos;
-    m_targetRadius = rad;
+    m_targetRadius = 0.f;
+    m_radius = rad;
     m_color = color;
+    m_texID = texID;
 }
 
 target::~target()
@@ -29,7 +31,12 @@ void target::renderTarget(GLUquadric *quadric)
     glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glScalef(m_targetRadius, m_targetRadius, m_targetRadius);
 
-    gluSphere(quadric, 1.0, 10, 10);
+    if (m_targetRadius < m_radius)
+        m_targetRadius += .01f;
+    else
+        m_targetRadius = m_radius;
+
+    gluSphere(quadric, 1.0, 20, 20);
     glPopMatrix();
 }
 
@@ -44,11 +51,16 @@ void target::renderTargetSphere(GLUquadric *quadric)
 
     glPushMatrix();
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor3f(m_color.x, m_color.y, m_color.z);
+    glColor3f(0.f, 0.f, 0.f);
     glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glScalef(m_targetRadius, m_targetRadius, m_targetRadius);
 
-    gluSphere(quadric, 1.0, 10, 10);
+    gluQuadricNormals(quadric, GLU_SMOOTH);
+    gluQuadricTexture(quadric, GL_TRUE);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_texID);
+
+    gluSphere(quadric, 1.0, 15, 15);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glPopMatrix();
 }
