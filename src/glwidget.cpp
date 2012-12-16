@@ -15,7 +15,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -1.0f;
     m_camera.center.x = 0.0f, m_camera.center.y = 0.0f, m_camera.center.z = 0.0f;
     m_camera.up.x = 0.0f, m_camera.up.y = 1.0f, m_camera.up.z = 0.0f;
-    m_camera.fovy = 50.0f, m_camera.near = .5f, m_camera.far = 1000.0f;
+    m_camera.fovy = 80.0f, m_camera.near = .5f, m_camera.far = 1000.0f;
 
     // Set up 60 FPS draw loop
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
@@ -82,6 +82,7 @@ void GLWidget::initializeGL()
 
     //Enable blend
     glEnable(GL_BLEND);
+    glEnable(GL_POLYGON_SMOOTH);
     glEnable(GL_TEXTURE_2D);
 
     // Enable depth testing, so that objects are occluded based on depth instead of drawing order
@@ -210,8 +211,8 @@ void GLWidget::paintGL()
     //move the arrow's position based on velocity and time
 
     if (m_fired) {
-        m_arrowVel.y -= time * .1f;
-        m_arrowPos += m_arrowVel;
+        m_arrowVel.y -= time * .01f;
+        m_arrowPos += .1f*m_arrowVel;
     }
 
     //look for a hit, and if we find one, stop the arrow
@@ -224,13 +225,14 @@ void GLWidget::paintGL()
                 m_arrowhit = true;
                 m_canCollide = false;
 
-                float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z-.5);
+                float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z);
                 m_scoreLabel->setText("Score: " + QString::number(++m_score));
                 m_emitter = new ParticleEmitter(loadTexture(":/textures/particle3.jpg"), position,
                                                 float3(0.4f, 0.3f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                                 float3(0.0f, 0.0001f, 0.0f), .5f, 50.0f, 1.f/10000.0f, 30);
                 target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f));
                 m_targets.push_back(curtarget);
+                break;
             }
         }
     }
