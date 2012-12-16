@@ -36,7 +36,12 @@ void target::renderTarget(GLUquadric *quadric)
     else
         m_targetRadius = m_radius;
 
+    gluQuadricNormals(quadric, GLU_SMOOTH);
+    gluQuadricTexture(quadric, GL_TRUE);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_texID);
     gluSphere(quadric, 1.0, 20, 20);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glPopMatrix();
 }
 
@@ -55,10 +60,7 @@ void target::renderTargetSphere(GLUquadric *quadric)
     glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glScalef(m_targetRadius, m_targetRadius, m_targetRadius);
 
-    gluQuadricNormals(quadric, GLU_SMOOTH);
-    gluQuadricTexture(quadric, GL_TRUE);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_texID);
+
 
     gluSphere(quadric, 1.0, 15, 15);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
