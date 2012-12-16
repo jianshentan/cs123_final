@@ -1,4 +1,5 @@
 #include "particleemitter.h"
+#include <stdio.h>
 
 ParticleEmitter::ParticleEmitter(GLuint textureId, float3 position, float3 color, float3 velocity,
                                  float3 force, float scale, float fuzziness, float speed,
@@ -10,6 +11,8 @@ ParticleEmitter::ParticleEmitter(GLuint textureId, float3 position, float3 color
     m_particles = new Particle[maxParticles];
     resetParticles();
 
+    if (m_textureID != NULL)
+        std::cout << "texture:" << m_textureID << endl;
 
     for (unsigned i = 0; i < m_maxParticles; ++i)
         m_particles[i].active = false;
@@ -97,6 +100,7 @@ void ParticleEmitter::updateParticles()
 void ParticleEmitter::drawParticles()
 {
     //Put your code here
+
     glBindTexture(GL_TEXTURE_2D, m_textureID);
     glBegin(GL_QUADS);
 
@@ -105,19 +109,19 @@ void ParticleEmitter::drawParticles()
         Particle *cur = &(m_particles[i]);
         glColor4f(float(cur->color.r), float(cur->color.g), float(cur->color.b), float(sqrt(cur->life)));
 
-        glTexCoord2f(1.f, 0.f);
+        glTexCoord2f(0.f, 1.0f);
         glVertex3f(cur->pos.x + m_scale, cur->pos.y + m_scale, cur->pos.z);
 
-        glTexCoord2f(1.f, 1.f);
+        glTexCoord2f(0.f, 0.f);
         glVertex3f(cur->pos.x + m_scale, cur->pos.y, cur->pos.z);
 
-        glTexCoord2f(0.f, 1.f);
+        glTexCoord2f(1.0f, 0.0f);
         glVertex3f(cur->pos.x, cur->pos.y, cur->pos.z);
 
-        glTexCoord2f(0.f, 0.f);
+        glTexCoord2f(1.0f, 1.0f);
         glVertex3f(cur->pos.x, cur->pos.y + m_scale, cur->pos.z);
 
     }
     glEnd();
-
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
