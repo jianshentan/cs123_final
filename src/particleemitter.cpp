@@ -1,4 +1,5 @@
 #include "particleemitter.h"
+#include <stdio.h>
 
 ParticleEmitter::ParticleEmitter(GLuint textureId, float3 position, float3 color, float3 velocity,
                                  float3 force, float scale, float fuzziness, float speed,
@@ -10,6 +11,8 @@ ParticleEmitter::ParticleEmitter(GLuint textureId, float3 position, float3 color
     m_particles = new Particle[maxParticles];
     resetParticles();
 
+    if (m_textureID != NULL)
+        std::cout << "texture:" << m_textureID << endl;
 
     for (unsigned i = 0; i < m_maxParticles; ++i)
         m_particles[i].active = false;
@@ -97,6 +100,7 @@ void ParticleEmitter::updateParticles()
 void ParticleEmitter::drawParticles()
 {
     //Put your code here
+
     glBindTexture(GL_TEXTURE_2D, m_textureID);
     glBegin(GL_QUADS);
 
@@ -119,5 +123,5 @@ void ParticleEmitter::drawParticles()
 
     }
     glEnd();
-
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
