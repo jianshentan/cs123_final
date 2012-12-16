@@ -37,6 +37,10 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_targets.push_back(curtarget);
 
 
+    //load textures for environment
+    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
+    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
+
 }
 
 GLWidget::~GLWidget()
@@ -138,11 +142,6 @@ void GLWidget::initializeGL()
     // Load the initial settings
     updateSettings();
     updateCamera();
-
-
-    //load textures for environment
-    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
-    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 }
 
 GLuint GLWidget::loadTexture(const QString &path)
@@ -265,7 +264,7 @@ void GLWidget::paintGL()
     glColor3f(0.0f, 0.7f, 0.93f);
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 5.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
+    glScalef(10.0f, 6.5f, 10.0f);
     glRotatef(90, 0.0f, 1.0f, 0.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
@@ -315,14 +314,14 @@ void GLWidget::paintGL()
     for (int i = 0 ; i < m_emitters.size() ; i++)
     {
         if (m_emitters[i]) {
-            if (m_emitters[i]->check_for_termination())
-                //terminate
-            {
-                delete m_emitters[i];
-                break;
-            }
-            else
-            {
+//            if (m_emitters[i]->check_for_termination())
+//                //terminate
+//            {
+//                delete m_emitters[i];
+//                break;
+//            }
+//            else
+//            {
                 glDepthMask(GL_FALSE);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -338,7 +337,7 @@ void GLWidget::paintGL()
                 glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
                 //swapBuffers();
                 //glDepthMask(GL_TRUE);
-            }
+//            }
         }
     }
 }

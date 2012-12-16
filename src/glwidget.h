@@ -87,7 +87,7 @@ private:
 
     // texture stuff
     GLuint m_texture_backwall;
-    GLuiny m_texture_targets;
+    GLuint m_texture_targets;
 
 
 
