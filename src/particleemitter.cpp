@@ -129,7 +129,7 @@ void ParticleEmitter::drawParticles()
 bool ParticleEmitter::check_for_termination()
 {
     Particle *curr = &(m_particles[m_maxParticles]);
-    if (curr->life < 0)
+    if (curr->life < -1)
         return true;
     else
         return false;

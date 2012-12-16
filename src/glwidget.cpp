@@ -236,12 +236,13 @@ void GLWidget::paintGL()
                 m_arrowhit = true;
                 m_canCollide = false;
 
-                float3 position = float3(m_arrowPos.x, m_arrowPos.y, m_arrowPos.z);
+                float3 position = float3(m_arrowPos.x - 3 * m_arrowRadius, m_arrowPos.y - 3 * m_arrowRadius, m_arrowPos.z);
                 m_scoreLabel->setText("Score: " + QString::number(++m_score));
                 ParticleEmitter *emitter = new ParticleEmitter(loadTexture(":/textures/beyonceface.bmp"), position,
                                                 float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                                 float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
                 m_emitters.push_back(emitter);
+
                 target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f));
                 m_targets.push_back(curtarget);
                 break;
@@ -254,6 +255,8 @@ void GLWidget::paintGL()
         renderArrowSphere();
 
     //render the walls, floor and ceiling of our playing field
+
+    /* back wall */
     glColor3f(0.0f, 0.7f, 0.93f);
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 5.0f);
@@ -262,13 +265,15 @@ void GLWidget::paintGL()
     renderQuad();
     glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(-5.0f, -1.0f, -3.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-    renderQuad();
-    glPopMatrix();
+    /* not in sight */
+//    glPushMatrix();
+//    glTranslatef(-5.0f, -1.0f, -3.0f);
+//    glScalef(10.0f, 10.0f, 10.0f);
+//    glRotatef(90, 0.0f, 1.0f, 0.0f);
+//    renderQuad();
+//    glPopMatrix();
 
+    /* right wall */
     glPushMatrix();
     glTranslatef(-5.0f, 9.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
@@ -276,6 +281,7 @@ void GLWidget::paintGL()
     renderQuad();
     glPopMatrix();
 
+    /* left wall */
     glPushMatrix();
     glTranslatef(5.0f, 9.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
@@ -283,13 +289,15 @@ void GLWidget::paintGL()
     renderQuad();
     glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(5.0f, 5.0f, -3.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
-    glRotatef(90, 0.0f, 0.0f, 1.0f);
-    renderQuad();
-    glPopMatrix();
+    /* not in sight */
+//    glPushMatrix();
+//    glTranslatef(5.0f, 5.0f, -3.0f);
+//    glScalef(10.0f, 10.0f, 10.0f);
+//    glRotatef(90, 0.0f, 0.0f, 1.0f);
+//    renderQuad();
+//    glPopMatrix();
 
+    /* floor */
     glColor3f(0.3f, 0.74f, 0.2f);
     glPushMatrix();
     glTranslatef(5.0f, -1.0f, -3.0f);
