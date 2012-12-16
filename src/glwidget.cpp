@@ -29,11 +29,11 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
 
-    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(0.f, 1.f, .3f), m_texture_targets);
+    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
     m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(0.f, 1.f, .3f), m_texture_targets);
+    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texture_targets);
     m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f), m_texture_targets);
+    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
     m_targets.push_back(curtarget);
 
     //load textures for environment
@@ -142,7 +142,6 @@ void GLWidget::initializeGL()
     updateSettings();
     updateCamera();
 
-
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
     m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
@@ -179,6 +178,7 @@ void GLWidget::paintGL()
 {
     // Get the time
     float time = m_increment++ / (float) m_fps;
+
     for (int i = 0 ; i < m_emitters.size() ; i++)
     {
         if (m_emitters[i])
@@ -245,13 +245,13 @@ void GLWidget::paintGL()
                 m_canCollide = false;
 
                 float3 position = float3(m_arrowPos.x - 3 * m_arrowRadius, m_arrowPos.y - 3 * m_arrowRadius, m_arrowPos.z);
-                m_scoreLabel->setText("Score: " + QString::number(++m_score));
+               // m_scoreLabel->setText("Score: " + QString::number(++m_score));
                 ParticleEmitter *emitter = new ParticleEmitter(loadTexture(":/textures/beyonceface.bmp"), position,
                                                 float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                                 float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
                 m_emitters.push_back(emitter);
 
-                target *curtarget = new target(m_arrowPos, .3f, Vector3(.1f, 1.f, .1f), m_texture_targets);
+                target *curtarget = new target(m_arrowPos, .3f, Vector3(1.0f, 1.0f, 1.0f), m_texture_targets);
                 m_targets.push_back(curtarget);
                 break;
             }
@@ -262,57 +262,7 @@ void GLWidget::paintGL()
     if (!m_arrowhit)
         renderArrowSphere();
 
-    //render the walls, floor and ceiling of our playing field
-
-    /* back wall */
-    glColor3f(0.0f, 0.7f, 0.93f);
-    glPushMatrix();
-    glTranslatef(-5.0f, -1.0f, 5.0f);
-    glScalef(10.0f, 6.5f, 10.0f);
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-    renderQuad(m_texture_backwall);
-    glPopMatrix();
-
-    /* not in sight */
-//    glPushMatrix();
-//    glTranslatef(-5.0f, -1.0f, -3.0f);
-//    glScalef(10.0f, 10.0f, 10.0f);
-//    glRotatef(90, 0.0f, 1.0f, 0.0f);
-//    renderQuad();
-//    glPopMatrix();
-
-    /* right wall */
-    glPushMatrix();
-    glTranslatef(-5.0f, 9.0f, -3.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    renderQuad(m_texture_backwall);
-    glPopMatrix();
-
-    /* left wall */
-    glPushMatrix();
-    glTranslatef(5.0f, 9.0f, -3.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    renderQuad(m_texture_backwall);
-    glPopMatrix();
-
-    /* not in sight */
-//    glPushMatrix();
-//    glTranslatef(5.0f, 5.0f, -3.0f);
-//    glScalef(10.0f, 10.0f, 10.0f);
-//    glRotatef(90, 0.0f, 0.0f, 1.0f);
-//    renderQuad();
-//    glPopMatrix();
-
-    /* floor */
-    glColor3f(0.3f, 0.74f, 0.2f);
-    glPushMatrix();
-    glTranslatef(5.0f, -1.0f, -3.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
-    glRotatef(90, 0.0f, 0.0f, 1.0f);
-    renderQuad(m_texture_backwall);
-    glPopMatrix();
+    makeEnvironment();
 
     /* PARTICLES */
     for (int i = 0 ; i < m_emitters.size() ; i++)
@@ -580,4 +530,61 @@ void GLWidget::setLabel(QLabel* label)
 void GLWidget::tick()
 {
     update();
+}
+
+void GLWidget::makeEnvironment()
+{
+
+    //render the walls, floor and ceiling of our playing field
+
+    /* back wall */
+    glColor3f(0.0f, 0.7f, 0.93f);
+    glPushMatrix();
+    glTranslatef(-5.0f, -1.0f, 5.0f);
+    glScalef(10.0f, 6.5f, 10.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+    renderQuad(m_texture_backwall);
+    glPopMatrix();
+
+    /* not in sight */
+//    glPushMatrix();
+//    glTranslatef(-5.0f, -1.0f, -3.0f);
+//    glScalef(10.0f, 10.0f, 10.0f);
+//    glRotatef(90, 0.0f, 1.0f, 0.0f);
+//    renderQuad();
+//    glPopMatrix();
+
+    /* right wall */
+    glPushMatrix();
+    glTranslatef(-5.0f, 9.0f, -3.0f);
+    glScalef(10.0f, 10.0f, 10.0f);
+    glRotatef(90, 1.0f, 0.0f, 0.0f);
+    renderQuad(m_texture_backwall);
+    glPopMatrix();
+
+    /* left wall */
+    glPushMatrix();
+    glTranslatef(5.0f, 9.0f, -3.0f);
+    glScalef(10.0f, 10.0f, 10.0f);
+    glRotatef(90, 1.0f, 0.0f, 0.0f);
+    renderQuad(m_texture_backwall);
+    glPopMatrix();
+
+    /* not in sight */
+//    glPushMatrix();
+//    glTranslatef(5.0f, 5.0f, -3.0f);
+//    glScalef(10.0f, 10.0f, 10.0f);
+//    glRotatef(90, 0.0f, 0.0f, 1.0f);
+//    renderQuad();
+//    glPopMatrix();
+
+    /* floor */
+    glColor3f(1.0f, 0.3f, 0.3f);
+    glPushMatrix();
+    glTranslatef(5.0f, -1.0f, -3.0f);
+    glScalef(10.0f, 10.0f, 10.0f);
+    glRotatef(90, 0.0f, 0.0f, 1.0f);
+    renderQuad(m_texture_backwall);
+    glPopMatrix();
+
 }

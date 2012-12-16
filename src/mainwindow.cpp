@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreState(qtSettings.value("windowState").toByteArray());
 
     dataBind();
-    m_ui->centralWidget->setLabel(m_ui->scoreLabel);
+//    m_ui->centralWidget->setLabel(m_ui->scoreLabel);
 }
 
 MainWindow::~MainWindow()
@@ -33,7 +33,7 @@ MainWindow::~MainWindow()
 void MainWindow::dataBind()
 {
 #define BIND(b) { DataBinding *_b = (b); m_bindings.push_back(_b); assert(connect(_b, SIGNAL(dataChanged()), this, SLOT(settingsChanged()))); }
-    BIND(BoolBinding::bindCheckbox(m_ui->showIntersectSpheres, settings.showIntersectSpheres))
+//    BIND(BoolBinding::bindCheckbox(m_ui->showIntersectSpheres, settings.showIntersectSpheres))
 
 #undef BIND
 
