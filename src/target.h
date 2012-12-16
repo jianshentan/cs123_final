@@ -13,7 +13,7 @@ class target
 public:
     target(Vector3 pos, float rad, Vector3 color);
     ~target();
-    void renderTarget();
+    void renderTarget(GLUquadric *quadric);
     void renderTargetSphere(GLUquadric *quadric);
     void setTargetPosition(Vector3 pos);
     bool testCollide(Vector3 arrowPos, float arrowRad);

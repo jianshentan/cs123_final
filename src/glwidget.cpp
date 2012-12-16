@@ -182,7 +182,7 @@ void GLWidget::paintGL()
     int numtargets = m_targets.size();
     for (int i = 0; i < numtargets; i++) {
         target *curtarget = m_targets.at(i);
-        curtarget->renderTarget();
+        curtarget->renderTarget(m_quadric);
         if (settings.showIntersectSpheres)
             curtarget->renderTargetSphere(m_quadric);
     }
@@ -298,9 +298,9 @@ void GLWidget::paintGL()
         glAccum(GL_RETURN, 1.f);
 
         glDepthMask(GL_TRUE);
-        glFlush();
+        //glFlush();
         glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
-    //  swapBuffers();
+        //swapBuffers();
         glDepthMask(GL_TRUE);
     }
 }

@@ -22,25 +22,15 @@ target::~target()
   Renders the target and sets its position and size via m_targetPos and m_targetRadius
   You have to fill in this method
   **/
-void target::renderTarget()
+void target::renderTarget(GLUquadric *quadric)
 {
-    //TODO: implement this method
     glPushMatrix();
-    glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glColor3f(m_color.x, m_color.y, m_color.z);
-    glBegin(GL_TRIANGLES);
+    glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
+    glScalef(m_targetRadius, m_targetRadius, m_targetRadius);
 
-    float a = 10;
-    for (int i = 0; i < a ; i++)
-    {
-        glVertex3f(0.5 * cos ((i + 1) * (2 * M_PI)/a), 0.5 * sin ((i + 1) * (2 * M_PI/a)), 0);
-        glVertex3f(0.5 * cos (i * (2 * M_PI)/a), 0.5 * sin (i * (2 * M_PI/a)),0);
-        glVertex3f(0, 0, 0);
-    }
-
-    glEnd();
+    gluSphere(quadric, 1.0, 10, 10);
     glPopMatrix();
-    //setTargetPosition(m_targetPos);
 }
 
 
