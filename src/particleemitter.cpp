@@ -109,16 +109,16 @@ void ParticleEmitter::drawParticles()
         Particle *cur = &(m_particles[i]);
         glColor4f(float(cur->color.r), float(cur->color.g), float(cur->color.b), float(sqrt(cur->life)));
 
-        glTexCoord2f(1.f, 0.f);
+        glTexCoord2f(0.f, 1.0f);
         glVertex3f(cur->pos.x + m_scale, cur->pos.y + m_scale, cur->pos.z);
 
-        glTexCoord2f(1.f, 1.f);
+        glTexCoord2f(0.f, 0.f);
         glVertex3f(cur->pos.x + m_scale, cur->pos.y, cur->pos.z);
 
-        glTexCoord2f(0.f, 1.f);
+        glTexCoord2f(1.0f, 0.0f);
         glVertex3f(cur->pos.x, cur->pos.y, cur->pos.z);
 
-        glTexCoord2f(0.f, 0.f);
+        glTexCoord2f(1.0f, 1.0f);
         glVertex3f(cur->pos.x, cur->pos.y + m_scale, cur->pos.z);
 
     }
