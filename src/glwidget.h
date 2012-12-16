@@ -44,7 +44,7 @@ private:
     void renderTargetSphere();
     void renderArrowSphere();
 
-    void renderQuad();
+    void renderQuad(GLuint textureID);
     void renderArrow();
     void renderBow();
     void setTargetPosition(Vector3 pos);
@@ -84,6 +84,10 @@ private:
 
     // particle stuff
     std::vector<ParticleEmitter *> m_emitters;
+
+    // texture stuff
+    GLuint m_texture_backwall;
+    GLuiny m_texture_targets;
 
 
 
