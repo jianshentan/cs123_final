@@ -36,6 +36,10 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(0.f, 1.f, .3f), m_texture_targets);
     m_targets.push_back(curtarget);
 
+    //load textures for environment
+    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
+    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
+
 }
 
 GLWidget::~GLWidget()
