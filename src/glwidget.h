@@ -81,6 +81,7 @@ private:
 
     // texture stuff
     GLuint m_texture_backwall;
+    GLuint m_texture_winImage;
 
     bool m_toDrawEnvironment;
     bool m_winstate;
