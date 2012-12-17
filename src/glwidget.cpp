@@ -10,7 +10,7 @@
 #include <stdio.h>
 using namespace std;
 
-GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_score(0), m_canCollide(false)
+GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_score(0), m_canCollide(true)
 {
     // Set up the camera
     m_rotRadius = 3.f;
@@ -174,8 +174,13 @@ GLuint GLWidget::loadTexture(const QString &path)
 void GLWidget::paintGL()
 {
     // Get the time
+    if (m_canCollide)
+        m_increment++;
+    float time = m_increment / (float) m_fps;
     float arrowtime = m_arrowincrement++ / (float) m_fps;
-    float time = m_increment++ / (float) m_fps;
+    if (time > 5.f) {
+        lose();
+    }
 
     QString timetext = QString::number(((int)(time*10))/10.f);
     m_scoreLabel->setText(timetext);
@@ -267,36 +272,35 @@ void GLWidget::paintGL()
     //set the velocity to reflect the rotation transforms we do to render the arrow
     //we keep variables for all the values we need for this to simplify the velocity vector
 
+    if (m_canCollide) {
+        //move the arrow's position based on velocity and time
 
-    //move the arrow's position based on velocity and time
-
-    if (m_fired) {
-        m_arrowVel.y -= arrowtime * .01f;
-        m_arrowPos += .2f*m_arrowVel;
-    }
-
-    //look for a hit, and if we find one, stop the arrow
-
-
-    if (m_canCollide && !m_arrowhit) {
-        if (m_targetLandscape->testCollide(m_arrowPos, m_arrowRadius)) {
-            m_arrowhit = true;
-            m_canCollide = false;
+        if (m_fired) {
+            m_arrowVel.y -= arrowtime * .01f;
+            m_arrowPos += .2f*m_arrowVel;
         }
+
+        //look for a hit, and if we find one, stop the arrow
+
+        if (!m_arrowhit) {
+            if (m_targetLandscape->testCollide(m_arrowPos, m_arrowRadius)) {
+                m_arrowhit = true;
+            }
+        }
+        if (m_targetLandscape->get_win_state() && !m_winstate)
+        {
+            cout << "WON!" << endl;
+            m_winstate = true;
+        }
+        if (!m_arrowhit)
+            renderArrowSphere();
     }
-    if (m_targetLandscape->get_win_state() && !m_winstate)
-    {
-        cout << "WON!" << endl;
-        m_winstate = true;
-    }
-    if (!m_arrowhit)
-        renderArrowSphere();
 
     if (m_winstate)
     {
         //TO-DO: fade background out
-
     }
+
 
     glPopMatrix();
 }
@@ -514,9 +518,8 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     if(!m_firstPersonMode){
         m_firstPersonMode = true;
     }
-    else {
+    else if (m_canCollide){
         m_arrowhit = false;
-        m_canCollide = true;
         m_fired = true;
         m_arrowincrement = 0.0f;
         m_arrowPos =  Vector3(-m_rotRadius*sin(-m_camAngleX*M_PI/180.f), -.5f, -m_rotRadius*cos(-m_camAngleX*M_PI/180.f));
@@ -550,9 +553,10 @@ void GLWidget::updateSettings()
 /**
   Allows the ui to set the label to be modified to update score
   **/
-void GLWidget::setLabel(QLabel* label)
+void GLWidget::setLabel(QLabel* label, QLabel* label2)
 {
     m_scoreLabel = label;
+    m_messageLabel = label2;
 }
 
 /**
@@ -608,6 +612,11 @@ void GLWidget::drawEnvironment(float3 color)
     glPopMatrix();
 }
 
+void GLWidget::lose()
+{
+    m_canCollide = false;
+    m_messageLabel.setText(QString("You do not run the world."));
+}
 
 void GLWidget::handleWin()
 {

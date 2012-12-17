@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     dataBind();
     m_ui->centralWidget->setFocusPolicy(Qt::NoFocus);
     m_ui->glwidgey->setFocusPolicy(Qt::StrongFocus);
-    m_ui->glwidgey->setLabel(m_ui->score);
+    m_ui->glwidgey->setLabel(m_ui->score, m_ui->label);
 }
 
 MainWindow::~MainWindow()

@@ -21,7 +21,7 @@ public:
     void updateSettings();
     void updateCamera();
     void rotateCamera(float deltaX, float deltaY);
-    void setLabel(QLabel* label);
+    void setLabel(QLabel* label, QLabel* label2);
 
 protected:
     void initializeGL();
@@ -32,6 +32,8 @@ protected:
     void mousePressEvent ( QMouseEvent * event );
     GLuint loadTexture(const QString& path);
     void drawEnvironment(float3 color);
+
+    void lose();
 
     void handleWin();
     void drawWinScene(float height);
@@ -63,7 +65,7 @@ private:
     float m_firedXDiff, m_firedZDiff;
     float m_xDiff, m_zDiff;
     int m_score;
-    QLabel * m_scoreLabel;
+    QLabel * m_scoreLabel, m_messageLabel;
     bool m_canCollide;
     bool m_arrowhit;
     bool m_active;
