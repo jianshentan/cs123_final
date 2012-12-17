@@ -128,10 +128,10 @@ glEnable(GL_MULTISAMPLE);
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
     //m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 
-    GLuint texIDtarget1 = loadTexture(":/textures/beyonce_texture1.jpg");
-    GLuint texIDtarget2 = loadTexture(":/textures/beyonce_texture2.jpg");
-    GLuint texIDtarget3 = loadTexture(":/textures/beyonce_texture3.jpg");
-    GLuint texIDtarget4 = loadTexture(":/textures/beyonce_texture4.jpg");
+    GLuint texIDtarget1 = loadTexture(":/textures/stripes.bmp");
+    GLuint texIDtarget2 = loadTexture(":/textures/stripes2.bmp");
+    GLuint texIDtarget3 = loadTexture(":/textures/stripes.bmp");
+    GLuint texIDtarget4 = loadTexture(":/textures/stripes2.bmp");
     m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"), texIDtarget1, texIDtarget2, texIDtarget3, texIDtarget4);
 }
 
@@ -489,14 +489,6 @@ void GLWidget::makeEnvironment()
     renderQuad(m_texture_backwall);
     glPopMatrix();
 
-    /* front wall*/
-//    glPushMatrix();
-//    glTranslatef(-5.0f, -1.0f, -3.0f);
-//    glScalef(10.0f, 10.0f, 10.0f);
-//    glRotatef(90, 0.0f, 1.0f, 0.0f);
-//    renderQuad(m_texture_backwall);
-//    glPopMatrix();
-
     /* right wall */
     glPushMatrix();
     glRotatef(-90, 1.0f, 0.0f, 0.0f);
@@ -514,9 +506,6 @@ void GLWidget::makeEnvironment()
     glRotatef(90, 1.0f, 0.0f, 0.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
-
-    /* not in sight */
-
 
     /* floor */
     glPushMatrix();

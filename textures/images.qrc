@@ -9,5 +9,7 @@
         <file>beyonce_texture2.jpg</file>
         <file>beyonce_texture3.jpg</file>
         <file>beyonce_texture4.jpg</file>
+        <file>stripes.bmp</file>
+        <file>stripes2.bmp</file>
     </qresource>
 </RCC>
