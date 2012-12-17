@@ -146,7 +146,7 @@ bool TargetLandscape::testCollide(Vector3 arrowPos, float arrowRad)
             // m_scoreLabel->setText("Score: " + QString::number(++m_score));
             ParticleEmitter *emitter = new ParticleEmitter(m_texID, position,
                                             float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
-                                            float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
+                                            float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50, false);
             m_emitters.push_back(emitter);
 
             //target *curtarget = new target(arrowPos, .3f, Vector3(1.0f, 1.0f, 1.0f), m_texID);

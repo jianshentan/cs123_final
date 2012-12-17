@@ -34,6 +34,7 @@ protected:
     void drawEnvironment(float3 color);
 
     void handleWin();
+    void drawWinScene(float height);
 
 
 
@@ -78,8 +79,13 @@ private:
     // texture stuff
     GLuint m_texture_backwall;
 
+    bool m_toDrawEnvironment;
     bool m_winstate;
     float3 m_environmentColor;
+
+    float m_winObjectHeight;
+
+     std::vector<ParticleEmitter *> m_winEmitters;
 };
 
 #endif // GLWIDGET_H

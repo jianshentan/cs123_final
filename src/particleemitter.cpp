@@ -3,13 +3,15 @@
 
 ParticleEmitter::ParticleEmitter(GLuint textureId, float3 position, float3 color, float3 velocity,
                                  float3 force, float scale, float fuzziness, float speed,
-                                 unsigned maxParticles) :
+                                 unsigned maxParticles, bool live) :
                     m_maxParticles(maxParticles), m_textureID(textureId), m_speed(speed),
                     m_fuzziness(fuzziness), m_scale(scale), m_color(color), m_velocity(velocity),
                     m_force(force), m_position(position)
 {
     m_particles = new Particle[maxParticles];
     resetParticles();
+
+    m_live = live;
 
     if (m_textureID != NULL)
         std::cout << "texture:" << m_textureID << endl;
@@ -40,7 +42,7 @@ void ParticleEmitter::resetParticle(unsigned i)
     m_particles[i].pos.z = m_position.z;
     m_particles[i].pos.y = m_position.y;
     m_particles[i].pos.x = m_position.x;
-    m_particles[i].life = 3.0f;
+    m_particles[i].life = 2.0f;
     m_particles[i].decay = urand(.01f, .06f);
     m_particles[i].color = m_color;
     m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x)) * 8;
@@ -73,6 +75,8 @@ void ParticleEmitter::updateParticles()
         if (!m_particles[i].active) {
             m_particles[i].active = true;
             //resetParticle(i);
+            if (m_live)
+                resetParticle(i);
         } else {
             Particle *cur = &(m_particles[i]);
             cur->pos.x += cur->dir.x * m_speed;
@@ -83,7 +87,9 @@ void ParticleEmitter::updateParticles()
             cur->dir.z += cur->force.z;
             cur->life -= cur->decay;
             if (cur->life < 0)
-                cur->active = false;
+            {
+               cur->active = false;
+            }
 
             //fake gravity
             cur->dir.y -= 0.0f;
@@ -134,5 +140,4 @@ bool ParticleEmitter::check_for_termination()
         return true;
     else
         return false;
-
 }

@@ -60,7 +60,8 @@ public:
                     float scale = .5f,
                     float fuzziness = 50.0f,
                     float speed = 50.0f / 10000.0f,
-                    unsigned maxParticles = 10000);
+                    unsigned maxParticles = 10000,
+                    bool live = false);
 
     ~ParticleEmitter();
 
@@ -139,6 +140,12 @@ protected:
     float3 m_force;
     /** The starting point of the particle burst */
     float3 m_position;
+
+
+
+    ///
+
+    bool m_live;
 };
 
 
