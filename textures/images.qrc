@@ -3,11 +3,11 @@
         <file>particle1.bmp</file>
         <file>particle2.bmp</file>
         <file>particle3.jpg</file>
-        <file>beyonceface.jpg</file>
-        <file>beyonceface.png</file>
-        <file>beyonceface.tga</file>
         <file>beyonceface.bmp</file>
         <file>beyonce_singleladies_dance.jpg</file>
-        <file>beyonce_teeth.jpg</file>
+        <file>beyonce_texture1.jpg</file>
+        <file>beyonce_texture2.jpg</file>
+        <file>beyonce_texture3.jpg</file>
+        <file>beyonce_texture4.jpg</file>
     </qresource>
 </RCC>

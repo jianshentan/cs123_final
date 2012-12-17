@@ -11,7 +11,7 @@
 class target
 {
 public:
-    target(Vector3 pos, float rad, Vector3 color, GLuint texID);
+    target(Vector3 pos, float rad, Vector3 color);
     ~target();
     void renderTarget(GLUquadric *quadric);
     void renderTargetSphere(GLUquadric *quadric);
@@ -21,6 +21,7 @@ public:
     bool getCanCollide() { return m_canCollide; }
     float getRadius() {return m_targetRadius;}
     void setRadius(float rad);
+    GLuint loadTexture(const QString& path);
 protected:
     Vector3 m_targetPos;
     bool m_canCollide;
