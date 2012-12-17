@@ -48,8 +48,8 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>690</y>
+       <x>20</x>
+       <y>700</y>
        <width>500</width>
        <height>60</height>
       </rect>
@@ -65,7 +65,7 @@
       <string notr="true">color: rgb(244, 255, 0);</string>
      </property>
      <property name="text">
-      <string>FREE BEYONCE</string>
+      <string>SAVE BEYONCE IN 2 MINUTES!</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
@@ -74,9 +74,9 @@
     <widget class="QLabel" name="score">
      <property name="geometry">
       <rect>
-       <x>490</x>
-       <y>690</y>
-       <width>61</width>
+       <x>900</x>
+       <y>700</y>
+       <width>100</width>
        <height>41</height>
       </rect>
      </property>
@@ -85,7 +85,7 @@
 font: 75 36pt &quot;Lucida Grande&quot;;</string>
      </property>
      <property name="text">
-      <string>score</string>
+      <string>TIME</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>

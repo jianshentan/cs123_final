@@ -81,7 +81,7 @@ void GLWidget::initializeGL()
 
     // Enable Lighting
     glEnable(GL_LIGHTING);
-glEnable(GL_MULTISAMPLE);
+    glEnable(GL_MULTISAMPLE);
     //Enable blend
     glEnable(GL_BLEND);
 
@@ -176,6 +176,8 @@ void GLWidget::paintGL()
     // Get the time
     float time = m_increment++ / (float) m_fps;
 
+    QString timetext = QString::number(((int)(time*10))/10.f);
+    m_scoreLabel->setText(timetext);
 
     //if we haven't fired yet, update the angles so that the arrow's angles and position match the cameras
     if(!m_fired)
