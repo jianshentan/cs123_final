@@ -18,7 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreState(qtSettings.value("windowState").toByteArray());
 
     dataBind();
-//    m_ui->centralWidget->setLabel(m_ui->scoreLabel);
+    m_ui->centralWidget->setFocusPolicy(Qt::NoFocus);
+    m_ui->glwidgey->setFocusPolicy(Qt::StrongFocus);
+    m_ui->glwidgey->setLabel(m_ui->score);
 }
 
 MainWindow::~MainWindow()
@@ -41,7 +43,10 @@ void MainWindow::dataBind()
 
 void MainWindow::settingsChanged()
 {
-    m_ui->centralWidget->updateSettings();
+    m_ui->glwidgey->updateSettings();
+    m_ui->centralWidget->setFocusPolicy(Qt::NoFocus);
+    m_ui->glwidgey->setFocusPolicy(Qt::StrongFocus);
+    //    m_ui->centralWidget->updateSettings();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

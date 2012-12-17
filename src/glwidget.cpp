@@ -353,9 +353,23 @@ void GLWidget::updateCamera()
               m_camera.up.x, m_camera.up.y, m_camera.up.z);
     //rotate and translate for fps controls
 
+    glColor3f(1.f, 1.f, 1.f);
+    /* front wall*/
+    glPushMatrix();
+    glTranslatef(1.5f, -1.8f, -2.f);
+    glScalef(1.f, 10.0f, 1.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+    renderQuad(0);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-2.5f, -1.8f, -2.f);
+    glScalef(1.f, 10.0f, 1.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+    renderQuad(0);
+    glPopMatrix();
+
     glRotatef(m_camAngleX, 0.0f, 1.0f, 0.0f);
-    //glRotatef(-m_camAngleY, cos(M_PI*m_camAngleX/180), 0.0f, sin(M_PI*m_camAngleX/180));
-    //glTranslatef(m_xDiff, 0.0f, m_zDiff);
 }
 
 /**
@@ -506,15 +520,7 @@ void GLWidget::drawEnvironment(float3 color)
 
 
     //render the walls, floor and ceiling of our playing field
-    glColor3f(1.f, 1.f, 1.f);
     /* front wall*/
-    glPushMatrix();
-    glTranslatef(-3.f, 0.f, -1.f);
-    glScalef(1.f, 10.0f, 1.0f);
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-    renderQuad(0);
-    glPopMatrix();
-
 
     glColor3f(color.x, color.y, color.z);
     /* back wall */

@@ -6,17 +6,92 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1084</width>
-    <height>513</height>
+    <width>1024</width>
+    <height>768</height>
    </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
   </property>
   <property name="windowTitle">
    <string>[Lab02] 3D Transformations</string>
   </property>
-  <widget class="GLWidget" name="centralWidget">
+  <widget class="QWidget" name="centralWidget">
    <property name="focusPolicy">
     <enum>Qt::StrongFocus</enum>
    </property>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1024</width>
+      <height>768</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="GLWidget" name="glwidgey" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>-1</y>
+       <width>1024</width>
+       <height>680</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>690</y>
+       <width>500</width>
+       <height>60</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Lucida Bright</family>
+       <pointsize>24</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(244, 255, 0);</string>
+     </property>
+     <property name="text">
+      <string>FREE BEYONCE</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="score">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>690</y>
+       <width>61</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 0);
+font: 75 36pt &quot;Lucida Grande&quot;;</string>
+     </property>
+     <property name="text">
+      <string>score</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <action name="actionQuit">
    <property name="text">
