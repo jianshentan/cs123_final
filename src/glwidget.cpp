@@ -30,6 +30,9 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
     m_winstate = false;
+    m_environmentColor.x = 1.0f;
+    m_environmentColor.y = 1.0f;
+    m_environmentColor.z = 1.0f;
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
@@ -182,7 +185,13 @@ void GLWidget::paintGL()
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    makeEnvironment();
+    if (m_winstate)
+    {
+        m_environmentColor.x -= 0.01f;
+        m_environmentColor.y -= 0.01f;
+        m_environmentColor.z -= 0.01f;
+    }
+    drawEnvironment(m_environmentColor);
     glPushMatrix();
     m_targetLandscape->renderTargets();
 
@@ -234,10 +243,10 @@ void GLWidget::paintGL()
     if (!m_arrowhit)
         renderArrowSphere();
 
-
     if (m_winstate)
     {
         //TO-DO: fade background out
+
     }
 
     glPopMatrix();
@@ -492,7 +501,7 @@ void GLWidget::tick()
     update();
 }
 
-void GLWidget::makeEnvironment()
+void GLWidget::drawEnvironment(float3 color)
 {
 
 
@@ -507,6 +516,7 @@ void GLWidget::makeEnvironment()
     glPopMatrix();
 
 
+    glColor3f(color.x, color.y, color.z);
     /* back wall */
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 3.8f);
