@@ -16,6 +16,8 @@ public:
     //billboarding
     void billboardCheatCylindricalBegin();
     void billboardEnd();
+    void win_condition();
+
 
 protected:
     void initializeGL();
