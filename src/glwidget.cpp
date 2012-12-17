@@ -38,6 +38,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_background.jpg");
+    m_texture_winImage = loadTexture(":/textures/beyonce_win.jpg");
 }
 
 GLWidget::~GLWidget()
@@ -135,6 +136,7 @@ void GLWidget::initializeGL()
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_background.jpg");
+    m_texture_winImage = loadTexture(":/textures/beyonce_win.jpg");
     //m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 
     GLuint texIDtarget1 = loadTexture(":/textures/stripes.bmp");
@@ -196,7 +198,7 @@ void GLWidget::paintGL()
     if (m_toDrawEnvironment)
         drawEnvironment(m_environmentColor);
 
-    glPushMatrix();
+
     if (m_winstate)
     {
         m_environmentColor.x -= 0.01f;
@@ -205,6 +207,7 @@ void GLWidget::paintGL()
 
         if (m_environmentColor.x < 0.1f && m_toDrawEnvironment)
         {
+            cout << "called!!!!" << endl;
             m_toDrawEnvironment = false;
             handleWin();
         }
@@ -240,7 +243,6 @@ void GLWidget::paintGL()
             }
         }
     }
-    glPopMatrix();
 
     glPushMatrix();
     m_targetLandscape->renderTargets();
@@ -291,12 +293,6 @@ void GLWidget::paintGL()
     }
     if (!m_arrowhit)
         renderArrowSphere();
-
-    if (m_winstate)
-    {
-        //TO-DO: fade background out
-
-    }
 
     glPopMatrix();
 }
@@ -631,7 +627,7 @@ void GLWidget::drawWinScene(float height)
     glScalef(5.0f, 10.0f, 5.0f);
     glRotatef(90, 0.0f, 1.0f, 0.0f);
 
-    glBindTexture(GL_TEXTURE_2D, loadTexture(":/textures/beyonce_win.jpg"));
+    glBindTexture(GL_TEXTURE_2D, m_texture_winImage);
     glBegin(GL_QUADS);
 
     glNormal3f(1.0f, 0.0f, 0.0f);
