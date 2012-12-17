@@ -30,6 +30,9 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
     m_winstate = false;
+    m_environmentColor.x = 1.0f;
+    m_environmentColor.y = 1.0f;
+    m_environmentColor.z = 1.0f;
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
