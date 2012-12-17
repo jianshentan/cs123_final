@@ -30,7 +30,6 @@ void target::renderTarget(GLUquadric *quadric)
 {
     glPushMatrix();
 
-    //glRotatef(180, 1, 0, 0);
     glColor3f(m_color.x, m_color.y, m_color.z);
     glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glScalef(m_targetRadius, m_targetRadius, m_targetRadius);

@@ -115,7 +115,7 @@ void GLWidget::initializeGL()
     // Set up GL_LIGHT0 with a position and lighting properties
     GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0, 1.0f };
-    GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    GLfloat specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     GLfloat position[] = { 2.0f, 2.0f, 2.0f, 1.0f };
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
