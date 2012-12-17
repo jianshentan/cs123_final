@@ -483,8 +483,8 @@ void GLWidget::makeEnvironment()
     glColor3f(1.f, 1.f, 1.f);
     /* back wall */
     glPushMatrix();
-    glTranslatef(-5.0f, -1.0f, 5.0f);
-    glScalef(10.0f, 6.5f, 10.0f);
+    glTranslatef(-5.0f, -1.0f, 3.8f);
+    glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 0.0f, 1.0f, 0.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
@@ -499,8 +499,8 @@ void GLWidget::makeEnvironment()
 
     /* right wall */
     glPushMatrix();
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-    glTranslatef(-5.0f, 9.0f, -3.0f);
+    glRotatef(-90, 1.0f, 0.0f, 0.0f);
+    glTranslatef(-6.f, 1.f, -1.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
     renderQuad(m_texture_backwall);
@@ -508,19 +508,15 @@ void GLWidget::makeEnvironment()
 
     /* left wall */
     glPushMatrix();
-    glTranslatef(5.0f, 9.0f, -3.0f);
+    glRotatef(-90, 1.0f, 0.0f, 0.0f);
+    glTranslatef(6.0f, 1.f, -1.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
 
     /* not in sight */
-//    glPushMatrix();
-//    glTranslatef(5.0f, 5.0f, -3.0f);
-//    glScalef(10.0f, 10.0f, 10.0f);
-//    glRotatef(90, 0.0f, 0.0f, 1.0f);
-//    renderQuad();
-//    glPopMatrix();
+
 
     /* floor */
     glPushMatrix();
@@ -529,5 +525,4 @@ void GLWidget::makeEnvironment()
     glRotatef(90, 0.0f, 0.0f, 1.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
-
 }
