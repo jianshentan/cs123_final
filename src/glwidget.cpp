@@ -3,6 +3,8 @@
 #include "settings.h"
 #include <math.h>
 #include <iostream>
+#include <vector.h>
+#include <vector>
 
 
 #include <stdio.h>
@@ -126,7 +128,12 @@ void GLWidget::initializeGL()
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
     //m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 
-    m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"));
+    GLuint texIDtarget1 = loadTexture(":/textures/beyonce_texture1.jpg");
+    GLuint texIDtarget2 = loadTexture(":/textures/beyonce_texture2.jpg");
+    GLuint texIDtarget3 = loadTexture(":/textures/beyonce_texture3.jpg");
+    GLuint texIDtarget4 = loadTexture(":/textures/beyonce_texture4.jpg");
+
+    m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"), texIDtarget1, texIDtarget2, texIDtarget3, texIDtarget4);
 }
 
 GLuint GLWidget::loadTexture(const QString &path)

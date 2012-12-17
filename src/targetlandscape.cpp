@@ -1,27 +1,22 @@
 #include "targetlandscape.h"
 #include "settings.h"
+#include <vector>
 
-TargetLandscape::TargetLandscape(GLuint texID)
+TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint targetTexture2, GLuint targetTexture3, GLuint targetTexture4)
 {
-    /*GLuint texIDtarget;
-    texIDtarget = loadTexture(":/textures/beyonce_target1.jpg");
-    m_targettextures.push_back(texIDtarget);
-    texIDtarget = loadTexture(":/textures/beyonce_target2.jpg");
-    m_targettextures.push_back(texIDtarget);
-    texIDtarget = loadTexture(":/textures/beyonce_target3.jpg");
-    m_targettextures.push_back(texIDtarget);
-    texIDtarget = loadTexture(":/textures/beyonce_target4.jpg");
-    m_targettextures.push_back(texIDtarget);
-*/
-
     m_texID = texID;
     m_quadric = gluNewQuadric();
-    target *curtarget = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(1.0f, 1.f, 1.0f), m_texID);
+
+    target *curtarget;
+
+    curtarget = new target(Vector3(0,0,3.0f), 0.3f, Vector3(1.0f, 1.f, 1.0f), targetTexture1);
     m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texID);
-    m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(1.0f, 1.f, 1.0f), m_texID);
-    m_targets.push_back(curtarget);
+
+//    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texID);
+//    m_targets.push_back(curtarget);
+
+//    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(1.0f, 1.f, 1.0f), m_texID);
+//    m_targets.push_back(curtarget);
 
     //choose random texture image
 

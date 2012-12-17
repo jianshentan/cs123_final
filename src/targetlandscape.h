@@ -5,11 +5,11 @@
 #include "particleemitter.h"
 #include <vector>
 
-
+using namespace std;
 class TargetLandscape
 {
 public:
-    TargetLandscape(GLuint texID);
+    TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint targetTexture2, GLuint targetTexture3, GLuint targetTexture4);
     ~TargetLandscape();
     void renderTargets();
     bool testCollide(Vector3 arrowPos, float arrowRad);
