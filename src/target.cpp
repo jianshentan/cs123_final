@@ -5,7 +5,7 @@
 #include <QLabel>
 using namespace std;
 
-target::target(Vector3 pos, float rad, Vector3 color)
+target::target(Vector3 pos, float rad, Vector3 color, GLuint texID)
 {
     m_canCollide = false;
     m_targetPos = pos;
@@ -13,26 +13,6 @@ target::target(Vector3 pos, float rad, Vector3 color)
     m_radius = rad;
     m_color = color;
 
-    //choose random texture image
-
-    int randNum = rand() % 4 + 1; //gets rand number between 1 and 4
-    GLuint texID;
-    switch (randNum)
-    {
-        case 1:
-            texID = loadTexture(":/textures/beyonce_target1.jpg");
-            break;
-        case 2:
-            texID = loadTexture(":/textures/beyonce_target2.jpg");
-            break;
-        case 3:
-            texID = loadTexture(":/textures/beyonce_target3.jpg");
-            break;
-        case 4:
-            texID = loadTexture(":/textures/beyonce_target4.jpg");
-            break;
-
-    }
     m_texID = texID;
 
 }
@@ -41,29 +21,6 @@ target::~target()
 {
 }
 
-
-GLuint target::loadTexture(const QString &path)
-{
-    QFile file(path);
-
-    QImage image, texture;
-    if(!file.exists()) { return -1; }
-    image.load(file.fileName());
-    texture = QGLWidget::convertToGLFormat(image);
-    //Put your code here
-    GLuint id = 0;
-    glGenTextures(1, &id);
-
-    glBindTexture(GL_TEXTURE_2D, id);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, texture.width(), texture.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    return id;
-}
 
 /**
   Renders the target and sets its position and size via m_targetPos and m_targetRadius

@@ -27,7 +27,9 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowPos = Vector3(0,-.5f,0);
     m_arrowhit = false;
     m_fired = false;
-    m_targetLandscape = new TargetLandscape();
+
+
+    m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"));
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
@@ -207,7 +209,7 @@ void GLWidget::paintGL()
 
 
     if (m_canCollide && !m_arrowhit) {
-        if (m_targetLandscape->testCollide()) {
+        if (m_targetLandscape->testCollide(m_arrowPos, m_arrowRadius)) {
             m_arrowhit = true;
             m_canCollide = false;
         }
@@ -509,8 +511,4 @@ void GLWidget::makeEnvironment()
     renderQuad(m_texture_backwall);
     glPopMatrix();
 
-}
-
-void GLWidget::win()
-{
 }

@@ -49,8 +49,6 @@ private:
     Vector3 getArrowPosition() { return m_arrowPos; }
     float getArrowRadius() { return m_arrowRadius; }
 
-    //winning mthod
-    void win();
 
     LabCamera m_camera;
     QTimer m_timer;
