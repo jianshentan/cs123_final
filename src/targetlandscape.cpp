@@ -10,8 +10,11 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
     target *curtarget;
     int randNum;
     GLuint targetTexture;
-    for (int b = 0; b < 4 ; b++)
-    {
+    float zstart = -1.2f;
+
+//    for (int b = 0; b < 4 ; b++)
+//    {
+    int b = 1;
         for (int a = 0; a < 5 ; a++)
         {
             randNum = rand() % 4 + 1;
@@ -19,7 +22,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
             else if (randNum == 2) targetTexture = targetTexture2;
             else if (randNum == 3) targetTexture = targetTexture3;
             else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(-1.0f,-0.6f + b*0.5f,-0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            curtarget = new target(Vector3(-1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
             m_targets.push_back(curtarget);
 
             randNum = rand() % 4 + 1;
@@ -27,7 +30,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
             else if (randNum == 2) targetTexture = targetTexture2;
             else if (randNum == 3) targetTexture = targetTexture3;
             else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,-0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
             m_targets.push_back(curtarget);
 
             randNum = rand() % 4 + 1;
@@ -35,7 +38,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
             else if (randNum == 2) targetTexture = targetTexture2;
             else if (randNum == 3) targetTexture = targetTexture3;
             else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(0,-0.6f + b*0.5f,-0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            curtarget = new target(Vector3(0,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
             m_targets.push_back(curtarget);
 
             randNum = rand() % 4 + 1;
@@ -43,7 +46,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
             else if (randNum == 2) targetTexture = targetTexture2;
             else if (randNum == 3) targetTexture = targetTexture3;
             else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,-0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
             m_targets.push_back(curtarget);
 
             randNum = rand() % 4 + 1;
@@ -51,10 +54,10 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
             else if (randNum == 2) targetTexture = targetTexture2;
             else if (randNum == 3) targetTexture = targetTexture3;
             else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,-0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
             m_targets.push_back(curtarget);
         }
-    }
+//    }
 }
 
 TargetLandscape::~TargetLandscape()
@@ -151,6 +154,9 @@ bool TargetLandscape::testCollide(Vector3 arrowPos, float arrowRad)
 
             m_targets.erase(m_targets.begin() + i);
 
+            if (m_targets.size() == 0)
+                win_condition();
+
             return true;
         }
     }
@@ -190,4 +196,10 @@ void TargetLandscape::billboardEnd() {
     float restored[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, restored);
     glPopMatrix();
+}
+
+void TargetLandscape::win_condition()
+{
+    cout << "win!! you've free beyonce!" << endl;
+
 }
