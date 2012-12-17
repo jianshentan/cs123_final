@@ -13,7 +13,8 @@ using namespace std;
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_score(0), m_canCollide(false)
 {
     // Set up the camera
-    m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -5.0f;
+    m_rotRadius = 3.f;
+    m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -m_rotRadius;
     m_camera.center.x = 0.0f, m_camera.center.y = 0.0f, m_camera.center.z = 0.0f;
     m_camera.up.x = 0.0f, m_camera.up.y = 1.0f, m_camera.up.z = 0.0f;
     m_camera.fovy = 80.0f, m_camera.near = .5f, m_camera.far = 1000.0f;
@@ -417,7 +418,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         m_canCollide = true;
         m_fired = true;
         m_increment = 0.0f;
-        m_arrowPos =  Vector3(-2.f*sin(-m_camAngleX*M_PI/180.f), -.5f, -2.f*cos(-m_camAngleX*M_PI/180.f));
+        m_arrowPos =  Vector3(-m_rotRadius*sin(-m_camAngleX*M_PI/180.f), -.5f, -m_rotRadius*cos(-m_camAngleX*M_PI/180.f));
         double cx = cos(-m_angleX * M_PI/180);
         double sx = sin(-m_angleX * M_PI/180);
         double cy = cos(m_angleY * M_PI/180);
