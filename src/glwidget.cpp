@@ -515,3 +515,4 @@ void GLWidget::makeEnvironment()
     renderQuad(m_texture_backwall);
     glPopMatrix();
 }
+
