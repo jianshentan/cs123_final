@@ -174,6 +174,7 @@ GLuint GLWidget::loadTexture(const QString &path)
 void GLWidget::paintGL()
 {
     // Get the time
+    float arrowtime = m_arrowincrement++ / (float) m_fps;
     float time = m_increment++ / (float) m_fps;
 
     QString timetext = QString::number(((int)(time*10))/10.f);
@@ -270,7 +271,7 @@ void GLWidget::paintGL()
     //move the arrow's position based on velocity and time
 
     if (m_fired) {
-        m_arrowVel.y -= time * .01f;
+        m_arrowVel.y -= arrowtime * .01f;
         m_arrowPos += .2f*m_arrowVel;
     }
 
@@ -517,7 +518,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         m_arrowhit = false;
         m_canCollide = true;
         m_fired = true;
-        m_increment = 0.0f;
+        m_arrowincrement = 0.0f;
         m_arrowPos =  Vector3(-m_rotRadius*sin(-m_camAngleX*M_PI/180.f), -.5f, -m_rotRadius*cos(-m_camAngleX*M_PI/180.f));
         double cx = cos(-m_angleX * M_PI/180);
         double sx = sin(-m_angleX * M_PI/180);
@@ -582,8 +583,8 @@ void GLWidget::drawEnvironment(float3 color)
     /* right wall */
     glPushMatrix();
     glRotatef(-90, 1.0f, 0.0f, 0.0f);
-    glTranslatef(-6.f, 1.f, -1.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
+    glTranslatef(-6.f, 2.5f, -1.2f);
+    glScalef(12.0f, 12.0f, 12.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
@@ -591,16 +592,17 @@ void GLWidget::drawEnvironment(float3 color)
     /* left wall */
     glPushMatrix();
     glRotatef(-90, 1.0f, 0.0f, 0.0f);
-    glTranslatef(6.0f, 1.f, -1.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
+    glTranslatef(6.0f, 2.5f, -1.2f);
+    glScalef(12.0f, 12.0f, 12.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
 
     /* floor */
     glPushMatrix();
-    glTranslatef(5.0f, -1.0f, -3.0f);
-    glScalef(10.0f, 10.0f, 10.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+    glTranslatef(3.0f, -1.0f, -5.0f);
+    glScalef(10.0f, 8.0f, 10.0f);
     glRotatef(90, 0.0f, 0.0f, 1.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
