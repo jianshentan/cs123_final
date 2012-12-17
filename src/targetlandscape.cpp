@@ -8,37 +8,53 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
     m_quadric = gluNewQuadric();
 
     target *curtarget;
+    int randNum;
+    GLuint targetTexture;
+    for (int b = 0; b < 3 ; b++)
+    {
+        for (int a = 0; a < 5 ; a++)
+        {
+            randNum = rand() % 4 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(-1.0f,-0.6f + b*0.5f,0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            m_targets.push_back(curtarget);
 
-    curtarget = new target(Vector3(0,0,3.0f), 0.3f, Vector3(1.0f, 1.f, 1.0f), targetTexture1);
-    m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            m_targets.push_back(curtarget);
 
-//    curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texID);
-//    m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(0,-0.6f + b*0.5f,0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            m_targets.push_back(curtarget);
 
-//    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(1.0f, 1.f, 1.0f), m_texID);
-//    m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            m_targets.push_back(curtarget);
 
-    //choose random texture image
-
-//    int randNum = rand() % 4 + 1; //gets rand number between 1 and 4
-//    GLuint texID;
-//    switch (randNum)
-//    {
-//        case 1:
-//            texID = loadTexture(":/textures/beyonce_target1.jpg");
-//            break;
-//        case 2:
-//            texID = loadTexture(":/textures/beyonce_target2.jpg");
-//            break;
-//        case 3:
-//            texID = loadTexture(":/textures/beyonce_target3.jpg");
-//            break;
-//        case 4:
-//            texID = loadTexture(":/textures/beyonce_target4.jpg");
-//            break;
-
-//    }
-
+            randNum = rand() % 4 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,0.5f + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            m_targets.push_back(curtarget);
+        }
+    }
 }
 
 TargetLandscape::~TargetLandscape()
@@ -111,19 +127,27 @@ bool TargetLandscape::testCollide(Vector3 arrowPos, float arrowRad)
 {
     //look for a hit, and if we find one, stop the arrow
     int numtargets = m_targets.size();
-    for (int i = 0; i < numtargets; i++) {
+    for (int i = 0; i < numtargets; i++)
+    {
         target *curtarget = m_targets.at(i);
-        if (curtarget->testCollide(arrowPos, arrowRad)) {
+        if (curtarget->testCollide(arrowPos, arrowRad))
+        {
 
-            float3 position = float3(arrowPos.x - 3 * arrowRad, arrowPos.y - 3 * arrowRad, arrowPos.z);
+            float3 position;
+            position.x = curtarget->getTargetPosition().x - curtarget->getRadius();//float3(arrowPos.x - 3 * arrowRad, arrowPos.y - 3 * arrowRad, arrowPos.z);
+            position.y = curtarget->getTargetPosition().y - curtarget->getRadius();
+            position.z = curtarget->getTargetPosition().z - curtarget->getRadius();
             // m_scoreLabel->setText("Score: " + QString::number(++m_score));
             ParticleEmitter *emitter = new ParticleEmitter(m_texID, position,
                                             float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                             float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
             m_emitters.push_back(emitter);
 
-            target *curtarget = new target(arrowPos, .3f, Vector3(1.0f, 1.0f, 1.0f), m_texID);
-            m_targets.push_back(curtarget);
+            //target *curtarget = new target(arrowPos, .3f, Vector3(1.0f, 1.0f, 1.0f), m_texID);
+            //m_targets.push_back(curtarget);
+
+            m_targets.erase(m_targets.begin() + i);
+
             return true;
         }
     }
