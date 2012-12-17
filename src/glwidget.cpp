@@ -21,6 +21,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_camAngleX = 0.f;
     m_camAngleY = 0.f;
 
+
     // Set up 60 FPS draw loop
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
     m_timer.start(1000.0f / m_fps);
@@ -71,10 +72,10 @@ void GLWidget::initializeGL()
 
     // Enable Lighting
     glEnable(GL_LIGHTING);
-
+glEnable(GL_MULTISAMPLE);
     //Enable blend
     glEnable(GL_BLEND);
-    glEnable(GL_POLYGON_SMOOTH);
+
     glEnable(GL_TEXTURE_2D);
 
     // Enable depth testing, so that objects are occluded based on depth instead of drawing order
@@ -131,7 +132,6 @@ void GLWidget::initializeGL()
     GLuint texIDtarget2 = loadTexture(":/textures/beyonce_texture2.jpg");
     GLuint texIDtarget3 = loadTexture(":/textures/beyonce_texture3.jpg");
     GLuint texIDtarget4 = loadTexture(":/textures/beyonce_texture4.jpg");
-
     m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"), texIDtarget1, texIDtarget2, texIDtarget3, texIDtarget4);
 }
 
@@ -327,6 +327,7 @@ void GLWidget::updateCamera()
               m_camera.center.x, m_camera.center.y, m_camera.center.z,
               m_camera.up.x, m_camera.up.y, m_camera.up.z);
     //rotate and translate for fps controls
+
     glRotatef(m_camAngleX, 0.0f, 1.0f, 0.0f);
     //glRotatef(-m_camAngleY, cos(M_PI*m_camAngleX/180), 0.0f, sin(M_PI*m_camAngleX/180));
     //glTranslatef(m_xDiff, 0.0f, m_zDiff);
@@ -369,15 +370,25 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
 
     else if(event->key() == Qt::Key_Left)
     {
-        m_camAngleX -= 2.f;
-        m_angleX -= 2.f;
+        if (m_camAngleX >= -20.f) {
+            m_camAngleX -= 2.f;
+            m_angleX -= 2.f;
+        } else {
+            m_camAngleX = -20.f;
+            m_angleX = -20.f;
+        }
         updateCamera();
     }
 
     else if(event->key() == Qt::Key_Right)
     {
-        m_camAngleX += 2.f;
-        m_angleX += 2.f;
+        if (m_camAngleX <= 20.f) {
+            m_camAngleX += 2.f;
+            m_angleX += 2.f;
+        } else {
+            m_camAngleX = 20.f;
+            m_angleX = 20.f;
+        }
         updateCamera();
     }
 }
