@@ -6,7 +6,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
 {
     m_texID = texID;
     m_quadric = gluNewQuadric();
-
+    m_win = false;
     target *curtarget;
     int randNum;
     GLuint targetTexture;
@@ -25,37 +25,37 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
             curtarget = new target(Vector3(-1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
             m_targets.push_back(curtarget);
 
-            randNum = rand() % 4 + 1;
-            if (randNum == 1) targetTexture = targetTexture1;
-            else if (randNum == 2) targetTexture = targetTexture2;
-            else if (randNum == 3) targetTexture = targetTexture3;
-            else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-            m_targets.push_back(curtarget);
+//            randNum = rand() % 4 + 1;
+//            if (randNum == 1) targetTexture = targetTexture1;
+//            else if (randNum == 2) targetTexture = targetTexture2;
+//            else if (randNum == 3) targetTexture = targetTexture3;
+//            else if (randNum == 4) targetTexture = targetTexture4;
+//            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+//            m_targets.push_back(curtarget);
 
-            randNum = rand() % 4 + 1;
-            if (randNum == 1) targetTexture = targetTexture1;
-            else if (randNum == 2) targetTexture = targetTexture2;
-            else if (randNum == 3) targetTexture = targetTexture3;
-            else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(0,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-            m_targets.push_back(curtarget);
+//            randNum = rand() % 4 + 1;
+//            if (randNum == 1) targetTexture = targetTexture1;
+//            else if (randNum == 2) targetTexture = targetTexture2;
+//            else if (randNum == 3) targetTexture = targetTexture3;
+//            else if (randNum == 4) targetTexture = targetTexture4;
+//            curtarget = new target(Vector3(0,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+//            m_targets.push_back(curtarget);
 
-            randNum = rand() % 4 + 1;
-            if (randNum == 1) targetTexture = targetTexture1;
-            else if (randNum == 2) targetTexture = targetTexture2;
-            else if (randNum == 3) targetTexture = targetTexture3;
-            else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-            m_targets.push_back(curtarget);
+//            randNum = rand() % 4 + 1;
+//            if (randNum == 1) targetTexture = targetTexture1;
+//            else if (randNum == 2) targetTexture = targetTexture2;
+//            else if (randNum == 3) targetTexture = targetTexture3;
+//            else if (randNum == 4) targetTexture = targetTexture4;
+//            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+//            m_targets.push_back(curtarget);
 
-            randNum = rand() % 4 + 1;
-            if (randNum == 1) targetTexture = targetTexture1;
-            else if (randNum == 2) targetTexture = targetTexture2;
-            else if (randNum == 3) targetTexture = targetTexture3;
-            else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-            m_targets.push_back(curtarget);
+//            randNum = rand() % 4 + 1;
+//            if (randNum == 1) targetTexture = targetTexture1;
+//            else if (randNum == 2) targetTexture = targetTexture2;
+//            else if (randNum == 3) targetTexture = targetTexture3;
+//            else if (randNum == 4) targetTexture = targetTexture4;
+//            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+//            m_targets.push_back(curtarget);
         }
 //    }
 }
@@ -155,7 +155,7 @@ bool TargetLandscape::testCollide(Vector3 arrowPos, float arrowRad)
             m_targets.erase(m_targets.begin() + i);
 
             if (m_targets.size() == 0)
-                win_condition();
+                m_win = true;
 
             return true;
         }
@@ -198,8 +198,10 @@ void TargetLandscape::billboardEnd() {
     glPopMatrix();
 }
 
-void TargetLandscape::win_condition()
+bool TargetLandscape::get_win_state()
 {
-    cout << "win!! you've free beyonce!" << endl;
-
+    if (m_win)
+        return true;
+    else
+        return false;
 }

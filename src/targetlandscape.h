@@ -16,7 +16,8 @@ public:
     //billboarding
     void billboardCheatCylindricalBegin();
     void billboardEnd();
-    void win_condition();
+    //win condition
+    bool get_win_state();
 
 
 protected:
@@ -31,6 +32,8 @@ protected:
 
     // particle stuff
     std::vector<ParticleEmitter *> m_emitters;
+
+    bool m_win;
 };
 
 #endif // TARGETLANDSCAPE_H
