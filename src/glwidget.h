@@ -8,9 +8,7 @@
 #include <iostream>
 #include <QLabel>
 #include "camera.h"
-#include "particleemitter.h"
-#include "target.h"
-#include <vector>
+#include "targetlandscape.h"
 
 class GLWidget : public QGLWidget
 {
@@ -41,24 +39,19 @@ protected slots:
     void tick();
 
 private:
-    void renderTarget();
-    void renderTargetSphere();
     void renderArrowSphere();
 
     void renderQuad(GLuint textureID);
     void renderArrow();
     void renderBow();
     void setTargetPosition(Vector3 pos);
-    //Vector3 getTargetPosition() { return m_targetPos; }
+
     Vector3 getArrowPosition() { return m_arrowPos; }
-    //float getTargetRadius() { return m_targetRadius; }
     float getArrowRadius() { return m_arrowRadius; }
 
     //winning mthod
     void win();
 
-
-    GLUquadric *m_quadric;
     LabCamera m_camera;
     QTimer m_timer;
     float m_fps;
@@ -73,29 +66,19 @@ private:
     int m_score;
     QLabel * m_scoreLabel;
     bool m_canCollide;
-
     bool m_arrowhit;
     bool m_active;
+    GLUquadric *m_quadric;
+
+    TargetLandscape *m_targetLandscape;
 
     //This vector will automatically contain the arrow's position x,y,z coordinates
     Vector3 m_arrowPos;
     float m_arrowRadius;
     Vector3 m_arrowVel;
 
-    //This vector will be initialized to 0,0,0. You will need to set it in the renderTarget method
-
-    std::vector<target *> m_targets;
-    target *m_target_win;
-
-    // particle stuff
-    std::vector<ParticleEmitter *> m_emitters;
-
     // texture stuff
     GLuint m_texture_backwall;
-    GLuint m_texture_targets;
-
-
-
 };
 
 #endif // GLWIDGET_H

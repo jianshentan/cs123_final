@@ -3,7 +3,6 @@
 #include "settings.h"
 #include <math.h>
 #include <iostream>
-#include <vector>
 
 
 #include <stdio.h>
@@ -28,34 +27,16 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowPos = Vector3(0,-.5f,0);
     m_arrowhit = false;
     m_fired = false;
-
-    m_target_win = new target(Vector3(0,-1.5f,3.f), 1.f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
-
-    target *curtarget = new target(Vector3(0, -.6, 3.f), .3f, Vector3(1.0f, 1.0f, 1.0f), m_texture_targets);
-    m_targets.push_back(curtarget);
-    curtarget = new target(Vector3(0, -.3f, 3.f), .3f, Vector3(1.0f, 1.f, 1.0f), m_texture_targets);
-    m_targets.push_back(curtarget);
+    m_targetLandscape = new TargetLandscape();
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
-    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
-
 }
 
 GLWidget::~GLWidget()
 {
-    gluDeleteQuadric(m_quadric);
-    int numtargets = m_targets.size();
-    for (int i = 0; i < numtargets; i++) {
-        target *curtarget = m_targets.at(i);
-        delete curtarget;
-    }
-
-    //backup emitter destroyer:
-    for (int i = 0; i < m_emitters.size() ; i++)
-    {
-        delete m_emitters[i];
-    }
+    if (m_targetLandscape)
+        delete m_targetLandscape;
 }
 
 
@@ -144,7 +125,7 @@ void GLWidget::initializeGL()
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
-    m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
+    //m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 }
 
 GLuint GLWidget::loadTexture(const QString &path)
@@ -179,11 +160,6 @@ void GLWidget::paintGL()
     // Get the time
     float time = m_increment++ / (float) m_fps;
 
-    for (int i = 0 ; i < m_emitters.size() ; i++)
-    {
-        if (m_emitters[i])
-            m_emitters[i]->updateParticles();         //Draw the particles
-    }
 
     //if we haven't fired yet, update the angles so that the arrow's angles and position match the cameras
     if(!m_fired)
@@ -193,24 +169,12 @@ void GLWidget::paintGL()
         m_firedXDiff = m_xDiff;
         m_firedZDiff = m_zDiff;
     }
+
+
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // ==== render targets =====
-    m_target_win->renderTarget(m_quadric);
-    if (settings.showIntersectSpheres)
-        m_target_win->renderTargetSphere(m_quadric);
-
-    glPushMatrix();
-    int numtargets = m_targets.size();
-    for (int i = 0; i < numtargets; i++) {
-        target *curtarget = m_targets.at(i);
-        curtarget->renderTarget(m_quadric);
-        if (settings.showIntersectSpheres)
-            curtarget->renderTargetSphere(m_quadric);
-    }
-    glPopMatrix();
-    // =========================
+    m_targetLandscape->renderTargets();
 
     glPushMatrix();
     //transform to get to camera coordinates to render the arrow
@@ -240,69 +204,18 @@ void GLWidget::paintGL()
     }
 
     //look for a hit, and if we find one, stop the arrow
-    //bool collision = m_target->testCollide(m_arrowPos, m_arrowRadius);
 
-    if (m_target_win->testCollide(m_arrowPos, m_arrowRadius))
-        win();
 
     if (m_canCollide && !m_arrowhit) {
-        int numtargets = m_targets.size();
-        for (int i = 0; i < numtargets; i++) {
-            target *curtarget = m_targets.at(i);
-            if (curtarget->testCollide(m_arrowPos, m_arrowRadius)) {
-                m_arrowhit = true;
-                m_canCollide = false;
-
-                float3 position = float3(m_arrowPos.x - 3 * m_arrowRadius, m_arrowPos.y - 3 * m_arrowRadius, m_arrowPos.z);
-               // m_scoreLabel->setText("Score: " + QString::number(++m_score));
-                ParticleEmitter *emitter = new ParticleEmitter(loadTexture(":/textures/beyonceface.bmp"), position,
-                                                float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
-                                                float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 50);
-                m_emitters.push_back(emitter);
-
-                target *curtarget = new target(m_arrowPos, .3f, Vector3(1.0f, 1.0f, 1.0f), m_texture_targets);
-                m_targets.push_back(curtarget);
-                break;
-            }
+        if (m_targetLandscape->testCollide()) {
+            m_arrowhit = true;
+            m_canCollide = false;
         }
     }
-
-    //render arrow object
     if (!m_arrowhit)
         renderArrowSphere();
 
     makeEnvironment();
-
-    /* PARTICLES */
-    for (int i = 0 ; i < m_emitters.size() ; i++)
-    {
-        if (m_emitters[i]) {
-//            if (m_emitters[i]->check_for_termination())
-//                //terminate
-//            {
-//                delete m_emitters[i];
-//                break;
-//            }
-//            else
-//            {
-                glDepthMask(GL_FALSE);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-                m_emitters[i]->drawParticles();         //Draw the particles
-
-            //  create trailers
-                glAccum(GL_MULT, .5f);
-                glAccum(GL_ACCUM, .5f);
-                glAccum(GL_RETURN, 1.f);
-
-                glDepthMask(GL_TRUE);
-                //glFlush();
-                glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
-                //swapBuffers();
-                //glDepthMask(GL_TRUE);
-//            }
-        }
-    }
 }
 
 
