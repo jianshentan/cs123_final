@@ -37,7 +37,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_winObjectHeight = -15.0f;
 
     //load textures for environment
-    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
+    m_texture_backwall = loadTexture(":/textures/beyonce_background.jpg");
 }
 
 GLWidget::~GLWidget()
@@ -134,7 +134,7 @@ void GLWidget::initializeGL()
     updateCamera();
 
     //load textures for environment
-    m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
+    m_texture_backwall = loadTexture(":/textures/beyonce_background.jpg");
     //m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
 
     GLuint texIDtarget1 = loadTexture(":/textures/stripes.bmp");
