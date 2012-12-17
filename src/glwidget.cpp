@@ -34,6 +34,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_environmentColor.y = 1.0f;
     m_environmentColor.z = 1.0f;
     m_toDrawEnvironment = true;
+    m_winObjectHeight = -12.0f;
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
@@ -199,15 +200,21 @@ void GLWidget::paintGL()
         m_environmentColor.y -= 0.01f;
         m_environmentColor.z -= 0.01f;
 
-        if (m_environmentColor.x < 0.1f)
+        if (m_environmentColor.x < 0.1f && m_toDrawEnvironment)
+        {
             m_toDrawEnvironment = false;
+            handleWin();
+        }
 
         //draw celebatory beyonce particles!
         if (!m_toDrawEnvironment)
         {
+
+            if (m_winObjectHeight < 8.0f) m_winObjectHeight += 0.01f;
+            drawWinScene(m_winObjectHeight);
+
             for (int i = 0 ; i < m_winEmitters.size() ; i++)
             {
-                cout << "particles!:  " << i << endl;
                 if (m_winEmitters[i])
                 {
                         glDepthMask(GL_FALSE);
@@ -278,7 +285,6 @@ void GLWidget::paintGL()
     {
         cout << "WON!" << endl;
         m_winstate = true;
-        handleWin();
     }
     if (!m_arrowhit)
         renderArrowSphere();
@@ -600,16 +606,47 @@ void GLWidget::handleWin()
                                     float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                     float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 110, true);
     m_winEmitters.push_back(emitter);
-    emitter = new ParticleEmitter(loadTexture(":/textures/beyonceface.bmp"), float3(-0.5f, -1.2f, -1.5f),
+    emitter = new ParticleEmitter(loadTexture(":/textures/beyonceface.bmp"), float3(-1.0f, -1.2f, -1.5f),
                                     float3(1.0f, 1.0f, 1.0f), float3(0.0001f, 0.0001f, 0.0001f),
                                     float3(0.0f, 0.0001f, 0.0f), .6f, 50.0f, 1.f/10000.0f, 110, true);
     m_winEmitters.push_back(emitter);
+}
 
+void GLWidget::drawWinScene(float height)
+{
     glPushMatrix();
-    glTranslatef(-5.0f, -1.0f, 1.0f);
-    glScalef(3.0f, 3.0f, 3.0f);
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-    renderQuad(m_texture_backwall);
-    glPopMatrix();
 
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glTranslatef(-2.5f, height, 3.0f);
+    glScalef(5.0f, 5.0f, 5.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+
+    glBindTexture(GL_TEXTURE_2D, loadTexture(":/textures/beyonceface.bmp"));
+    glBegin(GL_QUADS);
+
+    glNormal3f(1.0f, 0.0f, 0.0f);
+        glTexCoord2f(0.f, 1.0f);
+    glVertex3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(0.f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+        glTexCoord2f(1.f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 1.0f);
+        glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(0.0f, 1.0f, 1.0f);
+
+    glNormal3f(-1.0f, 0.0f, 0.0f);
+        glTexCoord2f(0.f, 1.0f);
+    glVertex3f(0.0f, 1.0f, 1.0f);
+        glTexCoord2f(0.f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 1.0f);
+        glTexCoord2f(1.f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(0.0f, 1.0f, 0.0f);
+
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+    glPopMatrix();
 }

@@ -42,7 +42,7 @@ void ParticleEmitter::resetParticle(unsigned i)
     m_particles[i].pos.z = m_position.z;
     m_particles[i].pos.y = m_position.y;
     m_particles[i].pos.x = m_position.x;
-    m_particles[i].life = 1.0f;
+    m_particles[i].life = 2.0f;
     m_particles[i].decay = urand(.01f, .06f);
     m_particles[i].color = m_color;
     m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x)) * 8;
@@ -140,5 +140,4 @@ bool ParticleEmitter::check_for_termination()
         return true;
     else
         return false;
-
 }
