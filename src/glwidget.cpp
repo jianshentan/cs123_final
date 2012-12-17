@@ -182,7 +182,13 @@ void GLWidget::paintGL()
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    makeEnvironment();
+    if (m_winstate)
+    {
+        m_environmentColor.x -= 0.01f;
+        m_environmentColor.y -= 0.01f;
+        m_environmentColor.z -= 0.01f;
+    }
+    drawEnvironment(m_environmentColor);
     glPushMatrix();
     m_targetLandscape->renderTargets();
 
@@ -234,10 +240,10 @@ void GLWidget::paintGL()
     if (!m_arrowhit)
         renderArrowSphere();
 
-
     if (m_winstate)
     {
         //TO-DO: fade background out
+
     }
 
     glPopMatrix();
@@ -492,11 +498,11 @@ void GLWidget::tick()
     update();
 }
 
-void GLWidget::makeEnvironment()
+void GLWidget::drawEnvironment(float3 color)
 {
 
     //render the walls, floor and ceiling of our playing field
-    glColor3f(1.f, 1.f, 1.f);
+    glColor3f(color.x, color.y, color.z);
     /* back wall */
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 3.8f);

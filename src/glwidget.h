@@ -31,7 +31,7 @@ protected:
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     GLuint loadTexture(const QString& path);
-    void makeEnvironment();
+    void drawEnvironment(float3 color);
 
     void handleWin();
 
@@ -79,6 +79,7 @@ private:
     GLuint m_texture_backwall;
 
     bool m_winstate;
+    float3 m_environmentColor;
 };
 
 #endif // GLWIDGET_H
