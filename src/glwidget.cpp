@@ -29,6 +29,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowPos =  Vector3(-m_rotRadius*sin(-m_camAngleX*M_PI/180.f), -.5f, -m_rotRadius*cos(-m_camAngleX*M_PI/180.f));
     m_arrowhit = false;
     m_fired = false;
+    m_winstate = false;
 
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
@@ -221,9 +222,20 @@ void GLWidget::paintGL()
             m_canCollide = false;
         }
     }
+    if (m_targetLandscape->get_win_state() && !m_winstate)
+    {
+        cout << "WON!" << endl;
+        m_winstate = true;
+        handleWin();
+    }
     if (!m_arrowhit)
         renderArrowSphere();
     glPopMatrix();
+
+    if (m_winstate)
+    {
+        //TO-DO: fade background out
+    }
 
 }
 
@@ -525,4 +537,15 @@ void GLWidget::makeEnvironment()
     glRotatef(90, 0.0f, 0.0f, 1.0f);
     renderQuad(m_texture_backwall);
     glPopMatrix();
+}
+
+void GLWidget::handleWin()
+{
+    glPushMatrix();
+    glTranslatef(-5.0f, -1.0f, 1.0f);
+    glScalef(3.0f, 3.0f, 3.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+    renderQuad(m_texture_backwall);
+    glPopMatrix();
+
 }

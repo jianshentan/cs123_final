@@ -33,6 +33,8 @@ protected:
     GLuint loadTexture(const QString& path);
     void makeEnvironment();
 
+    void handleWin();
+
 
 
 protected slots:
@@ -75,6 +77,8 @@ private:
 
     // texture stuff
     GLuint m_texture_backwall;
+
+    bool m_winstate;
 };
 
 #endif // GLWIDGET_H
