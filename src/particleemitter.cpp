@@ -43,9 +43,9 @@ void ParticleEmitter::resetParticle(unsigned i)
     m_particles[i].life = 3.0f;
     m_particles[i].decay = urand(.01f, .06f);
     m_particles[i].color = m_color;
-    m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x)) * 10;
-    m_particles[i].force.y = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.y)) * 10;
-    m_particles[i].force.z = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.z));
+    m_particles[i].force.x = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.x)) * 8;
+    m_particles[i].force.y = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.y)) * 8;
+    m_particles[i].force.z = urand(-m_fuzziness*.01f, (m_fuzziness*.01f + m_force.z)) * 8;
     m_particles[i].dir.x = urand(-m_fuzziness, m_fuzziness + m_velocity.x);
     m_particles[i].dir.y = urand(-m_fuzziness, m_fuzziness + m_velocity.y);
     m_particles[i].dir.z = urand(-m_fuzziness, m_fuzziness + m_velocity.z);
