@@ -199,6 +199,9 @@ void GLWidget::paintGL()
     //renderBow();
 
     glPopMatrix();
+
+
+    ///
     glPushMatrix();
 
     //start arrow off at fired position i.e. camera position when the arrow was fired or current camera position if it hasn't been fired
@@ -230,13 +233,14 @@ void GLWidget::paintGL()
     }
     if (!m_arrowhit)
         renderArrowSphere();
-    glPopMatrix();
+
 
     if (m_winstate)
     {
         //TO-DO: fade background out
     }
 
+    glPopMatrix();
 }
 
 
