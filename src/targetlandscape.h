@@ -13,6 +13,10 @@ public:
     ~TargetLandscape();
     void renderTargets();
     bool testCollide(Vector3 arrowPos, float arrowRad);
+    //billboarding
+    void billboardCheatCylindricalBegin();
+    void billboardEnd();
+
 protected:
     void initializeGL();
     GLUquadric *m_quadric;

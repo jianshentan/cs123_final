@@ -106,7 +106,9 @@ void TargetLandscape::renderTargets()
                 glDepthMask(GL_FALSE);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
+                //billboardCheatCylindricalBegin();
                 m_emitters[i]->drawParticles();         //Draw the particles
+                //billboardEnd();
 
                 //  create trailers
                 glAccum(GL_MULT, .5f);
@@ -118,6 +120,7 @@ void TargetLandscape::renderTargets()
                 glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
                 //swapBuffers();
                 //glDepthMask(GL_TRUE);
+
 //            }
         }
     }
@@ -152,4 +155,39 @@ bool TargetLandscape::testCollide(Vector3 arrowPos, float arrowRad)
         }
     }
     return false;
+}
+
+void TargetLandscape::billboardCheatCylindricalBegin()
+{
+    glPushMatrix();
+
+    float modelview[16];
+
+    float temp[16]={1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f};
+
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+
+    temp[0]=modelview[0];
+    temp[1]=modelview[4];
+    temp[2]=modelview[8];
+    temp[4]=modelview[1];
+    temp[5]=modelview[5];
+    temp[6]=modelview[9];
+    temp[8]=modelview[2];
+    temp[9]=modelview[6];
+    temp[10]=modelview[10];
+
+    glLoadMatrixf(temp);
+}
+
+void TargetLandscape::billboardEnd() {
+
+    // restore the previously
+    // stored modelview matrix
+    float restored[16];
+    glGetFloatv(GL_MODELVIEW_MATRIX, restored);
+    glPopMatrix();
 }
