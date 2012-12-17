@@ -65,7 +65,8 @@ private:
     float m_firedXDiff, m_firedZDiff;
     float m_xDiff, m_zDiff;
     int m_score;
-    QLabel * m_scoreLabel, m_messageLabel;
+    QLabel * m_scoreLabel;
+    QLabel * m_messageLabel;
     bool m_canCollide;
     bool m_arrowhit;
     bool m_active;

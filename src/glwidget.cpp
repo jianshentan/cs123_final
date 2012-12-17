@@ -178,7 +178,7 @@ void GLWidget::paintGL()
         m_increment++;
     float time = m_increment / (float) m_fps;
     float arrowtime = m_arrowincrement++ / (float) m_fps;
-    if (time > 5.f) {
+    if (time > 120.f) {
         lose();
     }
 
@@ -615,7 +615,6 @@ void GLWidget::drawEnvironment(float3 color)
 void GLWidget::lose()
 {
     m_canCollide = false;
-    m_messageLabel.setText(QString("You do not run the world."));
 }
 
 void GLWidget::handleWin()
