@@ -5,7 +5,7 @@
 #include <QLabel>
 using namespace std;
 
-target::target(Vector3 pos, float rad, Vector3 color, GLuint texID)
+target::target(Vector3 pos, float rad, Vector3 color, GLuint texID, float rotAngle)
 {
     m_canCollide = false;
     m_targetPos = pos;
@@ -13,6 +13,7 @@ target::target(Vector3 pos, float rad, Vector3 color, GLuint texID)
     m_radius = rad;
     m_color = color;
     m_texID = texID;
+    m_rotAngle = rotAngle;
 
 }
 
@@ -28,9 +29,12 @@ target::~target()
 void target::renderTarget(GLUquadric *quadric)
 {
     glPushMatrix();
+
+    //glRotatef(180, 1, 0, 0);
     glColor3f(m_color.x, m_color.y, m_color.z);
     glTranslatef(m_targetPos.x, m_targetPos.y, m_targetPos.z);
     glScalef(m_targetRadius, m_targetRadius, m_targetRadius);
+    glRotatef(m_rotAngle, 1, 0, 0);
 
     if (m_targetRadius < m_radius)
         m_targetRadius += .01f;
