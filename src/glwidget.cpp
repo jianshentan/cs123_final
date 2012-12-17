@@ -24,7 +24,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
     m_timer.start(1000.0f / m_fps);
 
-    m_arrowPos = Vector3(0,-.5f,-4.f);
+    m_arrowPos = Vector3(0,-.5f,-2.f);
     m_arrowhit = false;
     m_fired = false;
 
@@ -91,9 +91,9 @@ void GLWidget::initializeGL()
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
     // Set up global (ambient) lighting
-    GLfloat global_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
+//    GLfloat global_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+//    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+//    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 
     // Create particle emitter
     //m_emitters = NULL;
@@ -101,7 +101,7 @@ void GLWidget::initializeGL()
     glClear(GL_ACCUM_BUFFER_BIT);
 
     // Set up GL_LIGHT0 with a position and lighting properties
-    GLfloat ambientLight[] = {0.1f, 0.1f, 0.1f, 1.0f};
+    GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0, 1.0f };
     GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
     GLfloat position[] = { 2.0f, 2.0f, 2.0f, 1.0f };
@@ -417,7 +417,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         m_canCollide = true;
         m_fired = true;
         m_increment = 0.0f;
-        m_arrowPos =  Vector3(-4.f*sin(-m_camAngleX*M_PI/180.f), -.5f, -4.f*cos(-m_camAngleX*M_PI/180.f));
+        m_arrowPos =  Vector3(-2.f*sin(-m_camAngleX*M_PI/180.f), -.5f, -2.f*cos(-m_camAngleX*M_PI/180.f));
         double cx = cos(-m_angleX * M_PI/180);
         double sx = sin(-m_angleX * M_PI/180);
         double cy = cos(m_angleY * M_PI/180);
@@ -466,9 +466,8 @@ void GLWidget::makeEnvironment()
 {
 
     //render the walls, floor and ceiling of our playing field
-
+    glColor3f(1.f, 1.f, 1.f);
     /* back wall */
-    glColor3f(0.0f, 0.7f, 0.93f);
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 5.0f);
     glScalef(10.0f, 6.5f, 10.0f);
@@ -476,16 +475,17 @@ void GLWidget::makeEnvironment()
     renderQuad(m_texture_backwall);
     glPopMatrix();
 
-    /* not in sight */
+    /* front wall*/
 //    glPushMatrix();
 //    glTranslatef(-5.0f, -1.0f, -3.0f);
 //    glScalef(10.0f, 10.0f, 10.0f);
 //    glRotatef(90, 0.0f, 1.0f, 0.0f);
-//    renderQuad();
+//    renderQuad(m_texture_backwall);
 //    glPopMatrix();
 
     /* right wall */
     glPushMatrix();
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
     glTranslatef(-5.0f, 9.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
@@ -509,7 +509,6 @@ void GLWidget::makeEnvironment()
 //    glPopMatrix();
 
     /* floor */
-    glColor3f(1.0f, 0.3f, 0.3f);
     glPushMatrix();
     glTranslatef(5.0f, -1.0f, -3.0f);
     glScalef(10.0f, 10.0f, 10.0f);
