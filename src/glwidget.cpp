@@ -13,20 +13,18 @@ using namespace std;
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60.0f), m_increment(0), m_angleX(0.0f), m_angleY(0.0f), m_xDiff(0.0f), m_zDiff(0.0f), m_arrowRadius(0.1), m_score(0), m_canCollide(false)
 {
     // Set up the camera
-    m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -1.0f;
+    m_camera.eye.x = 0.0f, m_camera.eye.y = 0.0f, m_camera.eye.z = -5.0f;
     m_camera.center.x = 0.0f, m_camera.center.y = 0.0f, m_camera.center.z = 0.0f;
     m_camera.up.x = 0.0f, m_camera.up.y = 1.0f, m_camera.up.z = 0.0f;
     m_camera.fovy = 80.0f, m_camera.near = .5f, m_camera.far = 1000.0f;
+    m_camAngleX = 0.f;
+    m_camAngleY = 0.f;
 
     // Set up 60 FPS draw loop
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
     m_timer.start(1000.0f / m_fps);
 
-    //this->setMouseTracking(true);
-    //m_originalMouseX = -1;
-    //m_originalMouseY = -1;
-
-    m_arrowPos = Vector3(0,-.5f,0);
+    m_arrowPos = Vector3(0,-.5f,-4.f);
     m_arrowhit = false;
     m_fired = false;
 
@@ -183,6 +181,7 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     makeEnvironment();
+    glPushMatrix();
     m_targetLandscape->renderTargets();
 
     glPushMatrix();
@@ -223,6 +222,7 @@ void GLWidget::paintGL()
     }
     if (!m_arrowhit)
         renderArrowSphere();
+    glPopMatrix();
 
 }
 
@@ -326,8 +326,8 @@ void GLWidget::updateCamera()
               m_camera.center.x, m_camera.center.y, m_camera.center.z,
               m_camera.up.x, m_camera.up.y, m_camera.up.z);
     //rotate and translate for fps controls
-    glRotatef(m_angleX, 0.0f, 1.0f, 0.0f);
-    glRotatef(-m_angleY, cos(M_PI*m_angleX/180), 0.0f, sin(M_PI*m_angleX/180));
+    glRotatef(m_camAngleX, 0.0f, 1.0f, 0.0f);
+    //glRotatef(-m_camAngleY, cos(M_PI*m_camAngleX/180), 0.0f, sin(M_PI*m_camAngleX/180));
     glTranslatef(m_xDiff, 0.0f, m_zDiff);
 }
 
@@ -364,6 +364,18 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
     else if(event->key() == Qt::Key_Escape)
     {
         m_firstPersonMode = false;
+    }
+
+    else if(event->key() == Qt::Key_Left)
+    {
+        m_camAngleX -= 2.f;
+        updateCamera();
+    }
+
+    else if(event->key() == Qt::Key_Right)
+    {
+        m_camAngleX += 2.f;
+        updateCamera();
     }
 }
 
@@ -405,8 +417,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         m_canCollide = true;
         m_fired = true;
         m_increment = 0.0f;
-
-        m_arrowPos =  Vector3(-m_firedXDiff, -.5f, -m_firedZDiff);
+        m_arrowPos =  Vector3(-4.f*sin(-m_camAngleX*M_PI/180.f), -.5f, -4.f*cos(-m_camAngleX*M_PI/180.f));
         double cx = cos(-m_angleX * M_PI/180);
         double sx = sin(-m_angleX * M_PI/180);
         double cy = cos(m_angleY * M_PI/180);
@@ -423,17 +434,6 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         update();
     }
 
-}
-
-/**
-  Modifies the angle that the user is looking via deltaX and deltaY
-  **/
-void GLWidget::rotateCamera(float deltaX, float deltaY)
-{
-    m_angleX +=  deltaX * 0.025;
-    m_angleY +=  deltaY * 0.025;
-    m_angleY = qMax(-90 + 0.001, qMin(90 - 0.001, (double)m_angleY));
-    updateCamera();
 }
 
 /**

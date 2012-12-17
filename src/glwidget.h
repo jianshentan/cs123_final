@@ -54,9 +54,7 @@ private:
     QTimer m_timer;
     float m_fps;
     float m_increment;
-    float m_angleX, m_angleY;
-    float m_originalMouseX;
-    float m_originalMouseY;
+    float m_angleX, m_angleY, m_camAngleX, m_camAngleY;
     bool m_firstPersonMode, m_fired;
     float m_firedAngleX, m_firedAngleY;
     float m_firedXDiff, m_firedZDiff;
