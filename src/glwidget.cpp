@@ -495,8 +495,18 @@ void GLWidget::tick()
 void GLWidget::makeEnvironment()
 {
 
+
     //render the walls, floor and ceiling of our playing field
     glColor3f(1.f, 1.f, 1.f);
+    /* front wall*/
+    glPushMatrix();
+    glTranslatef(-3.f, 0.f, -1.f);
+    glScalef(1.f, 10.0f, 1.0f);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+    renderQuad(0);
+    glPopMatrix();
+
+
     /* back wall */
     glPushMatrix();
     glTranslatef(-5.0f, -1.0f, 3.8f);
