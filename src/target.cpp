@@ -12,7 +12,6 @@ target::target(Vector3 pos, float rad, Vector3 color, GLuint texID)
     m_targetRadius = 0.f;
     m_radius = rad;
     m_color = color;
-
     m_texID = texID;
 
 }

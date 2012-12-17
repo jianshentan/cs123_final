@@ -28,9 +28,6 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     m_arrowhit = false;
     m_fired = false;
 
-
-    m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"));
-
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
 }
@@ -128,6 +125,8 @@ void GLWidget::initializeGL()
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
     //m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
+
+    m_targetLandscape = new TargetLandscape(loadTexture(":/textures/beyonceface.bmp"));
 }
 
 GLuint GLWidget::loadTexture(const QString &path)
@@ -176,6 +175,7 @@ void GLWidget::paintGL()
     // Clear the color and depth buffers to the current glClearColor
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    makeEnvironment();
     m_targetLandscape->renderTargets();
 
     glPushMatrix();
@@ -217,7 +217,6 @@ void GLWidget::paintGL()
     if (!m_arrowhit)
         renderArrowSphere();
 
-    makeEnvironment();
 }
 
 
