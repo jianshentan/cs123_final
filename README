@@ -1,0 +1,25 @@
+CS123 Final Project - Freeing Beyonce
+==========================================
+klyamamo and jt16
+
+==========================================
+
+Technical Features:
+
+-Collision Detection
+-Particle Emitting
+
+==========================================
+Known Issues:
+
+no shader
+
+==========================================
+Design:
+
+
+Design is based off of the 3d modeling and particle emitter labs.
+First we create an environment with a randomly generated assortment of textured sphere targets and test collisions by seeing if our missile ball comes into contact with the 
+==========================================
+
+Also, we worked on this on intel macs, might not compile on Linux.
