@@ -78,8 +78,11 @@ private:
     // texture stuff
     GLuint m_texture_backwall;
 
+    bool m_toDrawEnvironment;
     bool m_winstate;
     float3 m_environmentColor;
+
+     std::vector<ParticleEmitter *> m_winEmitters;
 };
 
 #endif // GLWIDGET_H
