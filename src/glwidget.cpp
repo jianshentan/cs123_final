@@ -25,7 +25,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_timer(this), m_fps(60
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
     m_timer.start(1000.0f / m_fps);
 
-    m_arrowPos = Vector3(0,-.5f,-2.f);
+    m_arrowPos =  Vector3(-m_rotRadius*sin(-m_camAngleX*M_PI/180.f), -.5f, -m_rotRadius*cos(-m_camAngleX*M_PI/180.f));
     m_arrowhit = false;
     m_fired = false;
 
@@ -329,7 +329,7 @@ void GLWidget::updateCamera()
     //rotate and translate for fps controls
     glRotatef(m_camAngleX, 0.0f, 1.0f, 0.0f);
     //glRotatef(-m_camAngleY, cos(M_PI*m_camAngleX/180), 0.0f, sin(M_PI*m_camAngleX/180));
-    glTranslatef(m_xDiff, 0.0f, m_zDiff);
+    //glTranslatef(m_xDiff, 0.0f, m_zDiff);
 }
 
 /**
@@ -370,12 +370,14 @@ void GLWidget::keyPressEvent ( QKeyEvent * event )
     else if(event->key() == Qt::Key_Left)
     {
         m_camAngleX -= 2.f;
+        m_angleX -= 2.f;
         updateCamera();
     }
 
     else if(event->key() == Qt::Key_Right)
     {
         m_camAngleX += 2.f;
+        m_angleX += 2.f;
         updateCamera();
     }
 }
