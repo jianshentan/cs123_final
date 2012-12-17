@@ -211,7 +211,6 @@ void GLWidget::paintGL()
         //draw celebatory beyonce particles!
         if (!m_toDrawEnvironment)
         {
-            cout << "HEIGHT: "<< m_winObjectHeight << endl;
             if (m_winObjectHeight < -5.0f)
                 m_winObjectHeight += 0.02f;
             drawWinScene(m_winObjectHeight);
@@ -272,7 +271,7 @@ void GLWidget::paintGL()
 
     if (m_fired) {
         m_arrowVel.y -= time * .01f;
-        m_arrowPos += .1f*m_arrowVel;
+        m_arrowPos += .2f*m_arrowVel;
     }
 
     //look for a hit, and if we find one, stop the arrow

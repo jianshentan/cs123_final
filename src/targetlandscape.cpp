@@ -9,55 +9,61 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
     m_win = false;
     target *curtarget;
     int randNum;
+    float rotAngle;
     GLuint targetTexture;
     float zstart = -1.2f;
 
-//    for (int b = 0; b < 4 ; b++)
-//    {
-    int b = 1;
+    for (int b = 0; b < 4 ; b++)
+    {
+//    int b = 1;
         for (int a = 0; a < 5 ; a++)
         {
             randNum = rand() % 4 + 1;
+            rotAngle = rand() % 180 + 1;
             if (randNum == 1) targetTexture = targetTexture1;
             else if (randNum == 2) targetTexture = targetTexture2;
             else if (randNum == 3) targetTexture = targetTexture3;
             else if (randNum == 4) targetTexture = targetTexture4;
-            curtarget = new target(Vector3(-1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
+            curtarget = new target(Vector3(-1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture, rotAngle);
             m_targets.push_back(curtarget);
 
-//            randNum = rand() % 4 + 1;
-//            if (randNum == 1) targetTexture = targetTexture1;
-//            else if (randNum == 2) targetTexture = targetTexture2;
-//            else if (randNum == 3) targetTexture = targetTexture3;
-//            else if (randNum == 4) targetTexture = targetTexture4;
-//            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-//            m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            rotAngle = rand() % 180 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(-0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture,  rotAngle);
+            m_targets.push_back(curtarget);
 
-//            randNum = rand() % 4 + 1;
-//            if (randNum == 1) targetTexture = targetTexture1;
-//            else if (randNum == 2) targetTexture = targetTexture2;
-//            else if (randNum == 3) targetTexture = targetTexture3;
-//            else if (randNum == 4) targetTexture = targetTexture4;
-//            curtarget = new target(Vector3(0,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-//            m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            rotAngle = rand() % 180 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(0,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture,  rotAngle);
+            m_targets.push_back(curtarget);
 
-//            randNum = rand() % 4 + 1;
-//            if (randNum == 1) targetTexture = targetTexture1;
-//            else if (randNum == 2) targetTexture = targetTexture2;
-//            else if (randNum == 3) targetTexture = targetTexture3;
-//            else if (randNum == 4) targetTexture = targetTexture4;
-//            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-//            m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            rotAngle = rand() % 180 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(0.5f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture,  rotAngle);
+            m_targets.push_back(curtarget);
 
-//            randNum = rand() % 4 + 1;
-//            if (randNum == 1) targetTexture = targetTexture1;
-//            else if (randNum == 2) targetTexture = targetTexture2;
-//            else if (randNum == 3) targetTexture = targetTexture3;
-//            else if (randNum == 4) targetTexture = targetTexture4;
-//            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture);
-//            m_targets.push_back(curtarget);
+            randNum = rand() % 4 + 1;
+            rotAngle = rand() % 180 + 1;
+            if (randNum == 1) targetTexture = targetTexture1;
+            else if (randNum == 2) targetTexture = targetTexture2;
+            else if (randNum == 3) targetTexture = targetTexture3;
+            else if (randNum == 4) targetTexture = targetTexture4;
+            curtarget = new target(Vector3(1.0f,-0.6f + b*0.5f,zstart + a*0.5f), 0.2f, Vector3(1.0f, 1.f, 1.0f), targetTexture,  rotAngle);
+            m_targets.push_back(curtarget);
         }
-//    }
+    }
 }
 
 TargetLandscape::~TargetLandscape()

@@ -11,7 +11,7 @@
 class target
 {
 public:
-    target(Vector3 pos, float rad, Vector3 color, GLuint texID);
+    target(Vector3 pos, float rad, Vector3 color, GLuint texID, float rotAngle);
     ~target();
     void renderTarget(GLUquadric *quadric);
     void renderTargetSphere(GLUquadric *quadric);
@@ -28,6 +28,7 @@ protected:
     float m_radius;
     GLuint m_texID;
     Vector3 m_color; // .x represents r, .y represents g, .z represents b
+    float m_rotAngle;
 
 };
 
