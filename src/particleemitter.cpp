@@ -152,11 +152,12 @@ void ParticleEmitter::billboardCheatCylindricalBegin() {
 
     for( i=0; i<3; i+=2 )
     {
-        for( j=0; j<3; j++ ) {
-        if ( i==j )
-            modelview[i*4+j] = 1.0;
-        else
-            modelview[i*4+j] = 0.0;
+        for( j=0; j<3; j++ )
+        {
+            if ( i==j )
+                modelview[i*4+j] = 1.0;
+            else
+                modelview[i*4+j] = 0.0;
         }
     }
 
