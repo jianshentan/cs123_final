@@ -10,7 +10,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
     target *curtarget;
     int randNum;
     GLuint targetTexture;
-    for (int b = 0; b < 3 ; b++)
+    for (int b = 0; b < 4 ; b++)
     {
         for (int a = 0; a < 5 ; a++)
         {

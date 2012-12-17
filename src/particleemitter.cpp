@@ -100,7 +100,6 @@ void ParticleEmitter::updateParticles()
 void ParticleEmitter::drawParticles()
 {
     //Put your code here
-    billboardCheatCylindricalBegin();
 
     glBindTexture(GL_TEXTURE_2D, m_textureID);
     glBegin(GL_QUADS);
@@ -126,7 +125,6 @@ void ParticleEmitter::drawParticles()
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    billboardEnd();
 }
 
 bool ParticleEmitter::check_for_termination()
@@ -137,40 +135,4 @@ bool ParticleEmitter::check_for_termination()
     else
         return false;
 
-}
-
-void ParticleEmitter::billboardCheatCylindricalBegin() {
-
-    float modelview[16];
-    int i,j;
-
-    // save the current modelview matrix
-    glPushMatrix();
-
-    // get the current modelview matrix
-    glGetFloatv(GL_MODELVIEW_MATRIX , modelview);
-
-    for( i=0; i<3; i+=2 )
-    {
-        for( j=0; j<3; j++ )
-        {
-            if ( i==j )
-                modelview[i*4+j] = 1.0;
-            else
-                modelview[i*4+j] = 0.0;
-        }
-    }
-
-    // set the modelview matrix
-    glLoadMatrixf(modelview);
-}
-
-void ParticleEmitter::billboardEnd() {
-
-    // restore the previously
-    // stored modelview matrix
-    float modelview[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
-    glLoadMatrixf(modelview);
-    glPopMatrix();
 }

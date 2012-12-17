@@ -118,10 +118,6 @@ public:
       */
     inline GLuint texture() { return m_textureID; }
 
-    //billboarding
-    void billboardCheatCylindricalBegin();
-    void billboardEnd();
-
 protected:
     /** Contains all particles in the scene, active or inactive */
     Particle *m_particles;
