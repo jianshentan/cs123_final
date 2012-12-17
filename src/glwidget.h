@@ -56,7 +56,7 @@ private:
     LabCamera m_camera;
     QTimer m_timer;
     float m_fps;
-    float m_increment;
+    float m_increment, m_time, m_arrowincrement;
     float m_angleX, m_angleY, m_camAngleX, m_camAngleY, m_rotRadius;
     bool m_firstPersonMode, m_fired;
     float m_firedAngleX, m_firedAngleY;
