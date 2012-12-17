@@ -56,6 +56,15 @@ GLWidget::~GLWidget()
     {
         delete m_emitters[i];
     }
+
+    foreach (QGLShaderProgram *sp, ms_shaderPrograms)
+        delete sp;
+    foreach (QGLFramebufferObject *fbo, ms_framebufferObjects)
+        delete fbo;
+//    glDeleteLists(m_skybox, 1);
+//    const_cast<QGLContext *>(context())->deleteTexture(m_cubeMap);
+    glmDelete(ms_dragon.model);
+
 }
 
 
@@ -145,6 +154,66 @@ void GLWidget::initializeGL()
     //load textures for environment
     m_texture_backwall = loadTexture(":/textures/beyonce_singleladies_dance.jpg");
     m_texture_targets = loadTexture(":/textures/beyonce_teeth.jpg");
+
+    // load dragon
+    ms_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
+    cout << "Loaded dragon..." << endl;
+
+    createShaderPrograms();
+    cout << "Loaded shader programs..." << endl;
+
+    createFramebufferObjects(width(), height());
+    cout << "Loaded framebuffer objects..." << endl;
+}
+
+/**
+  Create shader programs.
+ **/
+void GLWidget::createShaderPrograms()
+{
+    const QGLContext *ctx = context();
+    ms_shaderPrograms["reflect"] = ResourceLoader::newShaderProgram(ctx, "shaders/reflect.vert", "shaders/reflect.frag");
+    ms_shaderPrograms["refract"] = ResourceLoader::newShaderProgram(ctx, "shaders/refract.vert", "shaders/refract.frag");
+    ms_shaderPrograms["brightpass"] = ResourceLoader::newFragShaderProgram(ctx, "shaders/brightpass.frag");
+    ms_shaderPrograms["blur"] = ResourceLoader::newFragShaderProgram(ctx, "shaders/blur.frag");
+}
+
+/**
+  Allocate framebuffer objects.
+
+  @param width: the viewport width
+  @param height: the viewport height
+ **/
+void GLWidget::createFramebufferObjects(int width, int height)
+{
+    // Allocate the main framebuffer object for rendering the scene to
+    // This needs a depth attachment
+    ms_framebufferObjects["fbo_0"] = new QGLFramebufferObject(width, height, QGLFramebufferObject::Depth,
+                                                             GL_TEXTURE_2D, GL_RGB16F_ARB);
+    ms_framebufferObjects["fbo_0"]->format().setSamples(16);
+    // Allocate the secondary framebuffer obejcts for rendering textures to (post process effects)
+    // These do not require depth attachments
+    ms_framebufferObjects["fbo_1"] = new QGLFramebufferObject(width, height, QGLFramebufferObject::NoAttachment,
+                                                             GL_TEXTURE_2D, GL_RGB16F_ARB);
+
+    ms_framebufferObjects["fbo_2"] = new QGLFramebufferObject(width, height, QGLFramebufferObject::NoAttachment,
+                                                             GL_TEXTURE_2D, GL_RGB16F_ARB);
+}
+
+/**
+  Called to switch to an orthogonal OpenGL camera.
+  Useful for rending a textured quad across the whole screen.
+
+  @param width: the viewport width
+  @param height: the viewport height
+**/
+void GLWidget::applyOrthogonalCamera(float width, float height)
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.f, width, 0.f, height);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 GLuint GLWidget::loadTexture(const QString &path)
@@ -305,39 +374,32 @@ void GLWidget::paintGL()
     }
 }
 
-
 /**
-  Renders the bow object
-  **/
-void GLWidget::renderBow(){
-    glColor3f(0.37f, 0.15f, 0.02f);
-    glTranslatef(0.0, 0.0, 1.0f);
-    glPushMatrix();
-    glScalef(.01f, 0.5f, .01f);
+  Draws a textured quad. The texture must be bound and unbound
+  before and after calling this method - this method assumes that the texture
+  has been bound beforehand.
 
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    gluCylinder(m_quadric, 1.0f, 1.0f, 1.0f, 10, 10);
-    glPopMatrix();
+  @param w: the width of the quad to draw
+  @param h: the height of the quad to draw
+**/
+void GLWidget::renderTexturedQuad(int width, int height) {
+    // Clamp value to edge of texture when texture index is out of bounds
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glPushMatrix();
-    glTranslatef(0.0f, -0.125f, 0.21f);
-    glScalef(.01f, 0.5f, .01f);
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    gluCylinder(m_quadric, 1.0f, 1.0f, 0.5f, 10, 10);
-    glPopMatrix();
-    glPushMatrix();
-    glRotatef(30, 1.0f, 0.0f, 0.0f);
-    glScalef(.01f, 0.01f, .5f);
-    gluCylinder(m_quadric, 1.0f, 1.0f, 0.5f, 10, 10);
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(0.0f, -0.5f, 0.0f);
-    glRotatef(-30, 1.0f, 0.0f, 0.0f);
-    glScalef(.01f, 0.01f, .5f);
-    gluCylinder(m_quadric, 1.0f, 1.0f, 0.5f, 10, 10);
-    glPopMatrix();
+    // Draw the  quad
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(0.0f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(width, 0.0f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(width, height);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(0.0f, height);
+    glEnd();
 }
+
 
 /**
   renders a quad that is visible from both front and back
