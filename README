@@ -23,3 +23,11 @@ First we create an environment with a randomly generated assortment of textured 
 ==========================================
 
 Also, we worked on this on intel macs, might not compile on Linux.
+
+==========================================
+----- Playing Instructions -----
+WASD - moves the angle that you shoot the ball out
+(arrow keys) - moves player left and right about a center point
+onMouseClick - a ball fires out
+
+

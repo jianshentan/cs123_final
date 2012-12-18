@@ -19,7 +19,7 @@ TargetLandscape::TargetLandscape(GLuint texID, GLuint targetTexture1, GLuint tar
     Vector3 green(1.0f, 1.0f, 1.0f);
     Vector3 blue(1.0f, 1.0f, 1.0f);
 
-    for (int b = 0; b < 4 ; b++)
+    for (int b = 0; b < 3 ; b++)
     {
 //    int b = 1;
         for (int a = 0; a < 5 ; a++)

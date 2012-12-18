@@ -180,7 +180,7 @@ void GLWidget::paintGL()
         m_increment++;
     float time = m_increment / (float) m_fps;
     float arrowtime = m_arrowincrement++ / (float) m_fps;
-    if (time > 120.f) {
+    if (time > 200.f) {
         lose();
     }
 
